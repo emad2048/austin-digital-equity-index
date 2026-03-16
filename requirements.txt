@@ -1,0 +1,10 @@
+requests
+pandas
+numpy
+python-dotenv
+beautifulsoup4
+streamlit
+plotly
+scikit-learn
+xgboost
+census
