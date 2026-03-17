@@ -22,7 +22,7 @@ import sys
 # Surface these in the Streamlit dashboard so users understand score ceilings.
 KNOWN_LIMITATIONS = [
     "Yelp is_claimed (7pts) always scores 0 until details endpoint added in Sprint 2",
-    "Social media dimension (15pts) always scores 0 until manual spot-check data added in Sprint 2",
+    "Social media dimension uses website social link detection as a proxy — presence signal only, not activity. Businesses without a reachable website score 0 regardless of actual social media presence.",
     "Website dimension max score is 16/25 (state 4 deep quality scoring deferred to Sprint 2)",
 ]
 
@@ -96,6 +96,20 @@ class DIIScorer:
                 reachability_path,
             )
             self._reachability = {}
+
+        # social_links.json — sibling of website_reachability.json in data/raw/
+        social_path = os.path.join(os.path.dirname(reachability_path), "social_links.json")
+        try:
+            with open(social_path, encoding="utf-8") as f:
+                raw_social = json.load(f)
+            self._social: dict[str, dict] = {entry["url"]: entry for entry in raw_social}
+        except FileNotFoundError:
+            self._log.warning(
+                "social_links.json not found at %s — "
+                "all businesses will score 0 pts on social media dimension",
+                social_path,
+            )
+            self._social = {}
 
     # ------------------------------------------------------------------
     # Dimension 1 — Google Maps presence (25 pts)
@@ -254,22 +268,59 @@ class DIIScorer:
 
     def score_social_media(self, business: dict) -> dict:
         """
-        Score social media presence (0-15 pts).
+        Score social media presence using website social link detection (0-15 pts).
 
-        SPRINT 1 PLACEHOLDER — Social media scoring requires manual
-        spot-check data that is not available from the Google Places or
-        Yelp APIs. This method will be updated in Sprint 2 when
-        data/raw/social_media_spot_check.csv is populated with manual
-        verification of Facebook, Instagram, and Twitter/X presence per
-        business.
+        Proxy methodology: detects links to social platforms in the business's
+        website HTML. This is a presence signal only — frequency, follower count,
+        and posting activity are not measured.
 
-        Returns 0 pts for all businesses until Sprint 2.
+        Businesses without a reachable website score 0 regardless of actual
+        social media presence. This is a known MVP limitation documented in
+        KNOWN_LIMITATIONS.
+
+        Points breakdown:
+          0 pts  No websiteUri, URL not in social_links data, or 0 platforms found
+          8 pts  1 platform detected
+         15 pts  2+ platforms detected
+
+        Breakdown fields:
+          social_state     int   0 = no signal, 1 = one platform, 2 = two or more
+          social_platforms list  platform names detected (e.g. ["facebook", "instagram"])
         """
-        return {
-            "score": 0,
-            "breakdown": {},
-            "flag": "manual_data_required",
-        }
+        website_url = business.get("websiteUri")
+
+        if not website_url:
+            return {
+                "score": 0,
+                "breakdown": {"social_state": 0, "social_platforms": []},
+            }
+
+        entry = self._social.get(website_url)
+
+        if entry is None:
+            return {
+                "score": 0,
+                "breakdown": {"social_state": 0, "social_platforms": []},
+            }
+
+        count     = entry.get("platform_count", 0)
+        platforms = entry.get("platforms_found", [])
+
+        if count >= 2:
+            return {
+                "score": 15,
+                "breakdown": {"social_state": 2, "social_platforms": platforms},
+            }
+        elif count == 1:
+            return {
+                "score": 8,
+                "breakdown": {"social_state": 1, "social_platforms": platforms},
+            }
+        else:
+            return {
+                "score": 0,
+                "breakdown": {"social_state": 0, "social_platforms": platforms},
+            }
 
     # ------------------------------------------------------------------
     # Dimension 5 — Info accuracy (15 pts)
