@@ -1,0 +1,25 @@
+=== ADEI Merge Audit ===
+Input: 1820 Google records, 4642 Yelp records
+
+Pass 1 (exact phone):
+  Confirmed matches: 251
+  Conflicts sent to review: 55
+
+Pass 2 (fuzzy within-tract):
+  Auto-confirmed (>=90): 41
+  Sent to review (75-89): 39
+  No match (<75): 1122
+
+Pass 3 (fuzzy cross-tract):
+  Auto-confirmed: 8
+  Sent to review: 19
+
+Master dataset composition:
+  Matched records: 300
+  Google-only records: 1099
+  Yelp-only records: 4227
+  Total: 5626
+
+Review queue: 68 rows requiring human decision
+
+GEOID integrity check: 4 records with mismatched Google/Yelp geoid (see warnings above)
