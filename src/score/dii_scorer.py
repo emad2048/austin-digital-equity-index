@@ -18,14 +18,12 @@ import os
 import re
 import sys
 
-import requests
-
 # Machine-readable list of scoring gaps in the current sprint.
 # Surface these in the Streamlit dashboard so users understand score ceilings.
 KNOWN_LIMITATIONS = [
     "Yelp is_claimed (7pts) always scores 0 until details endpoint added in Sprint 2",
     "Social media dimension (15pts) always scores 0 until manual spot-check data added in Sprint 2",
-    "Website mobile-friendly (3pts) and contact info (2pts) always score 0 until scraper built in Sprint 2",
+    "Website dimension max score is 16/25 (state 4 deep quality scoring deferred to Sprint 2)",
 ]
 
 # ---------------------------------------------------------------------------
@@ -68,6 +66,36 @@ def _fuzzy_similarity(a: str, b: str) -> float:
 # ---------------------------------------------------------------------------
 
 class DIIScorer:
+
+    def __init__(self, reachability_path: str | None = None):
+        """Load pre-computed website reachability data once at init time.
+
+        Args:
+            reachability_path: Path to website_reachability.json.
+                               Defaults to data/raw/website_reachability.json
+                               relative to the repo root.
+        """
+        import logging
+        self._log = logging.getLogger(__name__)
+
+        if reachability_path is None:
+            repo_root = os.path.join(os.path.dirname(__file__), "..", "..")
+            reachability_path = os.path.join(
+                repo_root, "data", "raw", "website_reachability.json"
+            )
+
+        try:
+            with open(reachability_path, encoding="utf-8") as f:
+                raw = json.load(f)
+            # Index by URL for O(1) lookup
+            self._reachability: dict[str, dict] = {entry["url"]: entry for entry in raw}
+        except FileNotFoundError:
+            self._log.warning(
+                "website_reachability.json not found at %s — "
+                "all websites will score as state 1 (no website)",
+                reachability_path,
+            )
+            self._reachability = {}
 
     # ------------------------------------------------------------------
     # Dimension 1 — Google Maps presence (25 pts)
@@ -125,46 +153,63 @@ class DIIScorer:
 
     def score_website(self, business: dict) -> dict:
         """
-        Score website presence and basic quality (0-25 pts).
+        Score website presence using pre-computed reachability data (0-16 pts).
 
-        Points breakdown:
-          15  websiteUri (Google) or url (Yelp) present
-              Note: Yelp's 'url' field from the search API is the Yelp
-              listing page URL, not the business's own website. Until the
-              Yelp business-details endpoint is pulled in Sprint 2, only
-              Google's websiteUri is treated as a true business website.
-           5  Site returns HTTP 200 (live reachability check)
-           3  Mobile-friendly — PLACEHOLDER, always 0 pts.
-              Real check requires Google Lighthouse API; implement in Sprint 2.
-           2  Contact info detectable — PLACEHOLDER, always 0 pts.
-              Real check requires HTML scraper; implement in Sprint 2.
+        Four states:
+          State 1 — No websiteUri in Google record              →  0 pts
+          State 2 — websiteUri present but unreachable
+                    (status 4xx/5xx, error, or timeout)         →  6 pts
+          State 3 — websiteUri present and reachable
+                    (status 200-399)                            → 16 pts
+          State 4 — Reserved for v2 (deep quality scoring)     —  not implemented
+
+        MVP limitation: max achievable score is 16/25. States 1-3 are derived
+        from data/raw/website_reachability.json, loaded once at scorer init.
+        Mobile-friendly and contact-info sub-dimensions are deferred to Sprint 2.
+
+        If a URL is present in the Google record but absent from the reachability
+        data, the business is treated as state 1 and a warning is logged.
         """
-        breakdown = {}
+        website_url = business.get("websiteUri")
 
-        website_url = business.get("websiteUri") or business.get("website_url")
+        if not website_url:
+            # State 1: no website
+            return {
+                "score": 0,
+                "breakdown": {"website_state": 1},
+            }
 
-        # Website present (15 pts)
-        breakdown["website_present"] = 15 if website_url else 0
+        entry = self._reachability.get(website_url)
 
-        # Live reachability check (5 pts)
-        live_score = 0
-        if website_url:
-            try:
-                resp = requests.get(website_url, timeout=5, allow_redirects=True)
-                if resp.status_code == 200:
-                    live_score = 5
-            except requests.RequestException:
-                live_score = 0
-        breakdown["site_reachable"] = live_score
+        if entry is None:
+            self._log.warning(
+                "URL not found in reachability data, treating as state 1: %s",
+                website_url,
+            )
+            return {
+                "score": 0,
+                "breakdown": {"website_state": 1},
+            }
 
-        # Mobile-friendly — requires Lighthouse API (Sprint 2)
-        breakdown["mobile_friendly"] = 0  # max 3 pts; implement in Sprint 2
+        status = entry.get("status_code")
+        reachable = (
+            entry.get("reachable") is True
+            and status is not None
+            and 200 <= status <= 399
+        )
 
-        # Contact info detectable — requires HTML scraper (Sprint 2)
-        breakdown["contact_info"] = 0  # max 2 pts; implement in Sprint 2
-
-        score = sum(breakdown.values())
-        return {"score": score, "breakdown": breakdown}
+        if reachable:
+            # State 3: present and reachable
+            return {
+                "score": 16,
+                "breakdown": {"website_state": 3},
+            }
+        else:
+            # State 2: present but unreachable
+            return {
+                "score": 6,
+                "breakdown": {"website_state": 2},
+            }
 
     # ------------------------------------------------------------------
     # Dimension 3 — Yelp / review platform presence (20 pts)
@@ -346,7 +391,7 @@ class DIIScorer:
 if __name__ == "__main__":
     repo_root = os.path.join(os.path.dirname(__file__), "..", "..")
 
-    google_path = os.path.join(repo_root, "data", "raw", "google_east_austin_raw.json")
+    google_path = os.path.join(repo_root, "data", "raw", "google_all_tracts_raw.json")
     yelp_path = os.path.join(repo_root, "data", "raw", "yelp_east_austin_raw.json")
 
     with open(google_path, encoding="utf-8") as f:
