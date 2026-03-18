@@ -1,0 +1,27 @@
+{
+  "run_timestamp": "2026-03-18T14:58:20.008129+00:00",
+  "source_file": "data/processed/master_businesses.json",
+  "total_records": 5626,
+  "in_scope_records": 5350,
+  "flagged_records": 276,
+  "imputation_parameters": {
+    "rating_median": 3.7,
+    "review_count_median": 3,
+    "category_fill_value": "Unknown",
+    "zip_code_fill_value": "Unknown"
+  },
+  "records_filled": {
+    "rating": 994,
+    "review_count": 994,
+    "category": 0,
+    "zip_code": 1
+  },
+  "fields_intentionally_left_null": {
+    "google_place_id": "null = yelp_only record, valid absence",
+    "yelp_id": "null = google_only record, valid absence",
+    "website_url": "null = no website, DII scoring signal",
+    "phone": "null = no phone listed, DII signal",
+    "yelp_url": "null = no Yelp presence, DII signal",
+    "dii_*_score": "scored in separate pipeline step"
+  }
+}
