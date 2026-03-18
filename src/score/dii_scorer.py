@@ -21,9 +21,7 @@ import sys
 # Machine-readable list of scoring gaps in the current sprint.
 # Surface these in the Streamlit dashboard so users understand score ceilings.
 KNOWN_LIMITATIONS = [
-    "Yelp is_claimed (7pts) always scores 0 until details endpoint added in Sprint 2",
     "Social media dimension uses website social link detection as a proxy — presence signal only, not activity. Businesses without a reachable website score 0 regardless of actual social media presence.",
-    "Website dimension max score is 16/25 (state 4 deep quality scoring deferred to Sprint 2)",
 ]
 
 # ---------------------------------------------------------------------------
@@ -111,6 +109,25 @@ class DIIScorer:
             )
             self._social = {}
 
+        # website_content.json — state 4 content check results (data/processed/)
+        content_path = os.path.join(
+            os.path.dirname(reachability_path), "..", "processed", "website_content.json"
+        )
+        try:
+            with open(content_path, encoding="utf-8") as f:
+                raw_content = json.load(f)
+            # Index by URL for O(1) lookup in score_website
+            self._website_content: dict[str, bool] = {
+                v["url"]: v.get("state4_qualified", False)
+                for v in raw_content.values()
+                if v.get("url")
+            }
+        except FileNotFoundError:
+            self._log.warning(
+                "website_content.json not found — state 4 scoring disabled",
+            )
+            self._website_content = {}
+
     # ------------------------------------------------------------------
     # Dimension 1 — Google Maps presence (25 pts)
     # ------------------------------------------------------------------
@@ -167,7 +184,7 @@ class DIIScorer:
 
     def score_website(self, business: dict) -> dict:
         """
-        Score website presence using pre-computed reachability data (0-16 pts).
+        Score website presence using pre-computed reachability and content data (0-25 pts).
 
         Four states:
           State 1 — No websiteUri in Google record              →  0 pts
@@ -175,11 +192,15 @@ class DIIScorer:
                     (status 4xx/5xx, error, or timeout)         →  6 pts
           State 3 — websiteUri present and reachable
                     (status 200-399)                            → 16 pts
-          State 4 — Reserved for v2 (deep quality scoring)     —  not implemented
+          State 4 — Reachable and contact info detected
+                    (2+ of: phone, email, hours)                → 25 pts
 
-        MVP limitation: max achievable score is 16/25. States 1-3 are derived
-        from data/raw/website_reachability.json, loaded once at scorer init.
-        Mobile-friendly and contact-info sub-dimensions are deferred to Sprint 2.
+        States 1-3 are derived from data/raw/website_reachability.json.
+        State 4 is derived from data/processed/website_content.json.
+        Both files are loaded once at scorer init.
+
+        State 4 is additive only — no record can be downgraded. A URL present
+        in website_content.json but not state4_qualified remains at state 3.
 
         If a URL is present in the Google record but absent from the reachability
         data, the business is treated as state 1 and a warning is logged.
@@ -213,7 +234,13 @@ class DIIScorer:
         )
 
         if reachable:
-            # State 3: present and reachable
+            # State 4: reachable and contact info detected (2+ signals)
+            if self._website_content.get(website_url) is True:
+                return {
+                    "score": 25,
+                    "breakdown": {"website_state": 4},
+                }
+            # State 3: reachable, no qualifying content data
             return {
                 "score": 16,
                 "breakdown": {"website_state": 3},
@@ -236,9 +263,6 @@ class DIIScorer:
         Points breakdown:
            8  Business is listed (record exists and has a name)
            7  is_claimed == True
-              Note: is_claimed is not returned by the Yelp search endpoint —
-              only by the business-details endpoint. Until Sprint 2 pulls
-              details, this will score 0 for all businesses.
            3  review_count > 0
            2  rating present
         """

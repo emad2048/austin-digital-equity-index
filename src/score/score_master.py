@@ -66,12 +66,12 @@ def map_master_to_scorer(record: dict) -> tuple[dict, dict]:
     google_dict = {
         # score_website / score_social_media key
         'websiteUri':          website_url,
-        # score_google_maps keys
-        'businessStatus':      None,   # dropped at merge — scores as missing
-        'regularOpeningHours': None,   # dropped at merge — scores as missing
+        # score_google_maps keys — recovered from raw Google data via recover_google_fields.py
+        'businessStatus':      record.get('business_status'),
+        'regularOpeningHours': record.get('has_opening_hours'),  # bool; scorer checks truthiness
         'userRatingCount':     review_count,
         'rating':              rating,
-        'photos':              None,   # dropped at merge — scores as missing
+        'photos':              record.get('has_photos'),          # bool; scorer checks truthiness
         # score_accuracy keys (google side)
         'nationalPhoneNumber': phone,
         'formattedAddress':    address_raw,
@@ -84,7 +84,7 @@ def map_master_to_scorer(record: dict) -> tuple[dict, dict]:
         'name':         name,
         'rating':       rating,
         'review_count': review_count,
-        'is_claimed':   None,   # not available from search endpoint — scores as 0
+        'is_claimed':   record.get('is_claimed'),  # merged from yelp_details_progress.json
         'hours':        None,   # dropped at merge — scores as missing
         # score_accuracy keys (yelp side)
         'phone':        phone,
@@ -113,14 +113,14 @@ def score_record(scorer, record: dict) -> dict:
     g_for_maps = google_dict if source in ('matched', 'google_only') else {}
     google_result = scorer.score_google_maps(g_for_maps)
 
-    # Dimension 2 — Website (0–25, effective ceiling 16 for MVP)
+    # Dimension 2 — Website (0–25, full ceiling — state 4 implemented)
     # yelp_only: explicit 0 by routing rule — website dimension is Google-sourced
     if source == 'yelp_only':
         website_result = {'score': 0, 'breakdown': {'website_state': 1}}
     else:
         website_result = scorer.score_website(google_dict)
 
-    # Dimension 3 — Yelp (0–20, effective ceiling 13 — is_claimed stubbed)
+    # Dimension 3 — Yelp (0–20, full dimension — is_claimed implemented)
     # google_only: no Yelp listing → explicit 0 via empty dict
     y_for_yelp = yelp_dict if source in ('matched', 'yelp_only') else {}
     yelp_result = scorer.score_yelp(y_for_yelp)
