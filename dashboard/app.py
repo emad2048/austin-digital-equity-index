@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -310,38 +311,47 @@ elif page == "The Evidence":
     )
 
     if not df_biz.empty:
-        fig_strip = go.Figure()
-        for nbhd, color in COLORS.items():
-            subset = df_biz[df_biz["neighborhood"] == nbhd]
-            fig_strip.add_trace(go.Box(
-                x=subset["dii_total_score"],
-                name=nbhd,
-                boxpoints="all",
-                jitter=0.4,
-                pointpos=0,
-                marker=dict(
-                    color=color,
-                    size=4,
-                    opacity=0.4,
-                ),
-                line=dict(color=color),
-                fillcolor="rgba(0,0,0,0)",
+        nbhd_data = [
+            {"name": "East Austin",    "mean": 47.9, "ci_low": 46.7, "ci_high": 49.1, "color": "#E05C1A"},
+            {"name": "South Congress", "mean": 54.2, "ci_low": 52.3, "ci_high": 56.1, "color": "#27AE60"},
+            {"name": "The Domain",     "mean": 53.0, "ci_low": 50.5, "ci_high": 55.5, "color": "#2E86AB"},
+        ]
+        fig_compare = go.Figure()
+        for n in nbhd_data:
+            fig_compare.add_trace(go.Bar(
+                x=[n["mean"]],
+                y=[n["name"]],
                 orientation="h",
+                marker_color=n["color"],
+                error_x=dict(
+                    type="data",
+                    symmetric=False,
+                    array=[n["ci_high"] - n["mean"]],
+                    arrayminus=[n["mean"] - n["ci_low"]],
+                    color="white",
+                    thickness=2,
+                    width=6,
+                ),
                 showlegend=False,
+                hovertemplate=f"{n['name']}<br>Mean DII: {n['mean']}<br>95% CI: [{n['ci_low']}, {n['ci_high']}]<extra></extra>",
             ))
-        fig_strip.update_layout(
+        fig_compare.add_vline(
+            x=54.2, line_dash="dash", line_color="#27AE60", line_width=1.5
+        )
+        fig_compare.update_layout(
             **DARK,
             xaxis=dict(
-                title="DII Score",
+                title="Mean DII Score",
+                range=[0, 70],
                 showgrid=False,
                 zeroline=False,
-                range=[0, 100],
             ),
             yaxis=dict(showgrid=False, zeroline=False),
-            margin=dict(l=120, r=20, t=20, b=40),
-            height=280,
+            margin=dict(l=140, r=40, t=20, b=40),
+            height=220,
+            bargap=0.4,
         )
-        st.plotly_chart(fig_strip, use_container_width=True)
+        st.plotly_chart(fig_compare, use_container_width=True)
 
     if stat_tests:
         with st.expander("Statistical detail"):
