@@ -55,6 +55,48 @@ st.markdown("""
         color: #EEEEEE;
         margin: 16px 0;
     }
+    .dim-card {
+        background: #1E1E2E;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 14px 12px;
+        text-align: center;
+    }
+    .dim-card .dim-pts {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #E05C1A;
+        margin: 6px 0;
+    }
+    .dim-card .dim-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+    }
+    .dim-card .dim-desc {
+        font-size: 0.78rem;
+        color: #999999;
+        margin-top: 4px;
+    }
+    .finding-card {
+        background: #1E1E2E;
+        border: 1px solid #333;
+        border-left: 4px solid #E05C1A;
+        border-radius: 8px;
+        padding: 20px;
+        height: 100%;
+    }
+    .finding-card .finding-text {
+        font-size: 0.95rem;
+        color: #EEEEEE;
+        line-height: 1.6;
+    }
+    .finding-card .finding-stat {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #E05C1A;
+        margin-bottom: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -152,49 +194,83 @@ page = st.sidebar.radio(
 # PAGE 1 — THE CASE
 # ══════════════════════════════════════════════════════════════════════════════
 if page == "The Case":
-    st.title("East Austin businesses score 47.9/100 on the Digital Inclusion Index")
-    st.markdown(
-        "Comparable neighborhoods score 53–54. The gap is statistically significant, "
-        "concentrated in fixable factors, and disproportionately affects minority-owned "
-        "business corridors."
-    )
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-metric">−6.3 pts</div>
-            <div class="stat-label">Gap vs. South Congress</div>
-            <div class="stat-sub">p = 0.000010</div>
-        </div>""", unsafe_allow_html=True)
-    with c2:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-metric">r = −0.71</div>
-            <div class="stat-label">Minority % correlation with DII</div>
-            <div class="stat-sub">p = 0.007, significant</div>
-        </div>""", unsafe_allow_html=True)
-    with c3:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-metric">1,737</div>
-            <div class="stat-label">East Austin businesses with no Google presence</div>
-            <div class="stat-sub">Largest platform absence of any neighborhood</div>
-        </div>""", unsafe_allow_html=True)
+    # ── Section 1: Project purpose ────────────────────────────────────────────
+    st.markdown("<h2 style='color:white; margin-bottom:8px;'>Austin Digital Equity Index</h2>",
+                unsafe_allow_html=True)
+    st.markdown(
+        "East Austin has a documented history of racial and economic marginalization. "
+        "This project asks a simple question: are those patterns visible in how businesses "
+        "appear online? The Austin Digital Equity Index measures digital visibility across "
+        "1,400+ small businesses in three Austin neighborhoods — East Austin, South Congress, "
+        "and The Domain."
+    )
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Section 2: How the DII works ──────────────────────────────────────────
+    st.markdown("<h3 style='color:white;'>How we measure digital inclusion</h3>",
+                unsafe_allow_html=True)
+    st.markdown("Each business receives a Digital Inclusion Index (DII) score from 0–100 across five dimensions:")
+
+    dims = [
+        ("Google Maps",    "25 pts", "Listed, verified, complete profile"),
+        ("Website",        "25 pts", "Reachable site with contact information"),
+        ("Yelp / Reviews", "20 pts", "Listed, claimed, review presence"),
+        ("Social Media",   "15 pts", "Active account with recent posts"),
+        ("Info Accuracy",  "15 pts", "Hours, phone, address consistent"),
+    ]
+    cols = st.columns(5)
+    for col, (name, pts, desc) in zip(cols, dims):
+        with col:
+            st.markdown(f"""
+            <div class="dim-card">
+                <div class="dim-name">{name}</div>
+                <div class="dim-pts">{pts}</div>
+                <div class="dim-desc">{desc}</div>
+            </div>""", unsafe_allow_html=True)
+
     st.markdown(
-        "The Digital Inclusion Index (DII) measures how findable and trustworthy a business "
-        "appears online — across Google Maps, its website, Yelp reviews, social media, and "
-        "information accuracy. Each dimension reflects a real barrier: a business absent from "
-        "Google Maps is invisible to anyone searching by phone."
+        "<p style='color:#999999; font-size:0.88rem; margin-top:14px;'>"
+        "A score of 100 means a business is fully visible and accurate across all five platforms. "
+        "The average East Austin business scores 47.9."
+        "</p>",
+        unsafe_allow_html=True,
     )
-    st.markdown(
-        "Digital invisibility has economic consequences. Businesses that cannot be found online "
-        "lose customers to competitors who can. In East Austin — a neighborhood with a documented "
-        "history of racial and economic marginalization — this gap is not random. It is structural, "
-        "measurable, and addressable."
-    )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Section 3: Headline findings ─────────────────────────────────────────
+    st.markdown("<h3 style='color:white;'>What we found</h3>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    findings = [
+        {
+            "stat": "6-point gap",
+            "text": "East Austin businesses are significantly harder to find online than businesses "
+                    "in comparable Austin neighborhoods — a gap that cannot be explained by chance alone.",
+        },
+        {
+            "stat": "A structural pattern",
+            "text": "In neighborhoods where more residents are people of color, businesses consistently "
+                    "show lower digital inclusion scores. This reflects decades of unequal access to "
+                    "resources and technical support — not a lack of effort by business owners.",
+        },
+        {
+            "stat": "1,737 businesses",
+            "text": "More than 1,700 East Austin businesses are completely invisible on Google Maps — "
+                    "meaning any customer searching by phone simply cannot find them, no matter how "
+                    "good the business is.",
+        },
+    ]
+    c1, c2, c3 = st.columns(3)
+    for col, f in zip([c1, c2, c3], findings):
+        with col:
+            st.markdown(f"""
+            <div class="finding-card">
+                <div class="finding-stat">{f['stat']}</div>
+                <div class="finding-text">{f['text']}</div>
+            </div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 2 — THE MAP
