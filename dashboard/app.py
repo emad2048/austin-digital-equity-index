@@ -7,9 +7,10 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from components.neighborhood_map import build_neighborhood_map
+from components.gentrification_chart import build_gentrification_chart
 
 # Resolve data paths relative to the project root (one level up from dashboard/)
-_ROOT = Path(__file__).parent.parent
+_ROOT = Path(__file__).resolve().parent.parent
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(layout="wide", page_title="Austin Digital Equity Index")
@@ -302,35 +303,45 @@ elif page == "The Map":
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "The Evidence":
 
-    # ── Section 1: Violin ────────────────────────────────────────────────────
+    # ── Section 1: Strip plot ─────────────────────────────────────────────────
     st.markdown(
-        "**East Austin's gap is specific — the two comparison neighborhoods are "
-        "statistically indistinguishable from each other.**"
+        "**East Austin's gap is specific — the two comparison neighborhoods "
+        "are statistically indistinguishable from each other.**"
     )
 
     if not df_biz.empty:
-        fig_violin = go.Figure()
+        fig_strip = go.Figure()
         for nbhd, color in COLORS.items():
-            subset = df_biz[df_biz["neighborhood"] == nbhd]["dii_total_score"].dropna()
-            fig_violin.add_trace(go.Violin(
-                x=[nbhd] * len(subset),
-                y=subset,
+            subset = df_biz[df_biz["neighborhood"] == nbhd]
+            fig_strip.add_trace(go.Box(
+                x=subset["dii_total_score"],
                 name=nbhd,
-                fillcolor=color,
-                line_color=color,
-                opacity=0.75,
-                box_visible=True,
-                meanline_visible=True,
+                boxpoints="all",
+                jitter=0.4,
+                pointpos=0,
+                marker=dict(
+                    color=color,
+                    size=4,
+                    opacity=0.4,
+                ),
+                line=dict(color=color),
+                fillcolor="rgba(0,0,0,0)",
+                orientation="h",
                 showlegend=False,
             ))
-        fig_violin.update_layout(
+        fig_strip.update_layout(
             **DARK,
-            xaxis=dict(title="", showgrid=False, zeroline=False),
-            yaxis=dict(title="DII Score", showgrid=False, zeroline=False),
-            margin=dict(l=40, r=20, t=20, b=40),
-            height=380,
+            xaxis=dict(
+                title="DII Score",
+                showgrid=False,
+                zeroline=False,
+                range=[0, 100],
+            ),
+            yaxis=dict(showgrid=False, zeroline=False),
+            margin=dict(l=120, r=20, t=20, b=40),
+            height=280,
         )
-        st.plotly_chart(fig_violin, use_container_width=True)
+        st.plotly_chart(fig_strip, use_container_width=True)
 
     if stat_tests:
         with st.expander("Statistical detail"):
@@ -396,6 +407,21 @@ elif page == "The Evidence":
         st.plotly_chart(fig_bar, use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown(
+        "**Within East Austin, digital inclusion is lowest in tracts facing "
+        "early-stage gentrification and displacement pressure.**"
+    )
+    st.markdown(
+        "<p style='color:#999999; font-size:0.9rem; margin-top:-8px;'>"
+        "A ~15-point gap separates the highest- and lowest-performing tracts "
+        "within East Austin alone.</p>",
+        unsafe_allow_html=True
+    )
+
+    st.plotly_chart(build_gentrification_chart(), use_container_width=True)
 
     # ── Section 3: Demographic Context ───────────────────────────────────────
     st.markdown(
