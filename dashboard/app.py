@@ -7,8 +7,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from components.neighborhood_map import build_neighborhood_map
 from components.gentrification_chart import build_gentrification_chart
+from components.neighborhood_map import build_neighborhood_map
+from components.tract_map import build_tract_map
 
 # Resolve data paths relative to the project root (one level up from dashboard/)
 _ROOT = Path(__file__).resolve().parent.parent
@@ -56,6 +57,14 @@ st.markdown("""
         font-size: 1.05rem;
         color: #EEEEEE;
         margin: 16px 0;
+    }
+    .transparent-box {
+        background: rgba(30, 30, 46, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        padding: 10px 12px;
+        color: #EEEEEE;
+        margin: 6px 0 12px;
     }
     .dim-card {
         background: #1E1E2E;
@@ -283,14 +292,33 @@ elif page == "The Map":
         "lines drawn by decades of policy.**"
     )
 
-    size_mode_label = st.radio(
-        "Size circles by:",
-        ["Number of businesses", "DII score"],
+    map_view = st.radio(
+        "Map view:",
+        ["East Austin tracts", "Neighborhood disparities"],
         horizontal=True,
     )
-    size_mode = "businesses" if size_mode_label == "Number of businesses" else "dii"
 
-    fig = build_neighborhood_map(size_mode)
+    if map_view == "Neighborhood disparities":
+        st.markdown(
+            """
+<div class="transparent-box">
+    East Austin — 47.9 DII · 17.5% Yelp match<br>
+    South Congress — 54.2 DII · 29.1% Yelp match<br>
+    The Domain — 53.0 DII · 28.1% Yelp match
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+        size_mode_label = st.radio(
+            "Size circles by:",
+            ["Number of businesses", "DII score"],
+            horizontal=True,
+        )
+        size_mode = "businesses" if size_mode_label == "Number of businesses" else "dii"
+        fig = build_neighborhood_map(size_mode)
+    else:
+        fig = build_tract_map()
+
     st.plotly_chart(fig, use_container_width=True)
 
     st.info(
@@ -435,37 +463,20 @@ elif page == "The Evidence":
 
     # ── Section 3: Demographic Context ───────────────────────────────────────
     st.markdown(
-        "**The digital inclusion gap correlates with minority population share — "
-        "not broadband access.**"
+        "**The digital inclusion gap follows neighborhood demographics "
+        "— not infrastructure.**"
     )
-
-    if acs_corr:
-        minority  = acs_corr.get("pct_minority", {})
-        income    = acs_corr.get("median_household_income", {})
-        broadband = acs_corr.get("pct_broadband", {})
-
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-metric">r = {minority.get('pearson_r', 0):.2f}</div>
-                <div class="stat-label">Minority %</div>
-                <div class="stat-sub">p = {minority.get('p_value', 0):.3f} · Significant — higher minority share → lower DII</div>
-            </div>""", unsafe_allow_html=True)
-        with c2:
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-metric">r = +{income.get('pearson_r', 0):.2f}</div>
-                <div class="stat-label">Median Income</div>
-                <div class="stat-sub">p = {income.get('p_value', 0):.3f} · Directionally correct but underpowered at 13 tracts</div>
-            </div>""", unsafe_allow_html=True)
-        with c3:
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-metric">r = +{broadband.get('pearson_r', 0):.2f}</div>
-                <div class="stat-label">Broadband Access</div>
-                <div class="stat-sub">p = {broadband.get('p_value', 0):.2f} · Null finding — access is uniformly high (87–100%)</div>
-            </div>""", unsafe_allow_html=True)
+    st.markdown("""
+<div class="callout-box">
+    In census tracts where more residents are people of color, businesses
+    consistently score lower on the Digital Inclusion Index. This is the
+    strongest demographic pattern in the dataset — and it holds even after
+    accounting for income and broadband access, which is uniformly high
+    (87–100%) across all study areas. The barrier to digital inclusion is
+    not infrastructure. It is awareness, language access, and technical
+    assistance.
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
