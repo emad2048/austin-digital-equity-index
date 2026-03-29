@@ -140,17 +140,16 @@ st.markdown("""
     }
     [data-testid="stSidebar"] { display: none !important; }
     [data-testid="collapsedControl"] { display: none !important; }
+    #MainMenu { visibility: hidden !important; }
+    #MainMenu * { visibility: hidden !important; }
     footer { visibility: hidden !important; }
-    footer:after {
-        content: '';
-        visibility: hidden;
-        display: block;
-        height: 0;
-        clear: both;
+    [data-testid="stToolbar"] { visibility: hidden !important; }
+    [data-testid="stDecoration"] { display: none !important; }
+    [data-testid="stStatusWidget"] { visibility: hidden !important; }
+    header[data-testid="stHeader"] {
+        background: #E8F4F0 !important;
+        height: 0 !important;
     }
-    [data-testid="stbottom"] { display: none !important; }
-    .stBottom { display: none !important; }
-    [data-testid="stStatusWidget"] { display: none !important; }
     .main .block-container { padding-bottom: 1rem !important; }
 </style>
 """, unsafe_allow_html=True)
