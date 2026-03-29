@@ -173,6 +173,13 @@ st.markdown("""
     li[class*="nav-item"] {
         flex: 1 !important;
     }
+    [data-testid="stAppViewContainer"] > section > div > div > div > div > div > iframe {
+        width: 100% !important;
+    }
+    section[data-testid="stMain"] > div {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -271,7 +278,7 @@ page = option_menu(
         "container": {
             "background-color": "#E8F4F0",
             "padding": "8px 24px",
-            "margin": "0 -1rem 1rem -1rem",
+            "margin": "-4px -4rem 1rem -4rem",
             "border-bottom": "2px solid #0F6E56",
             "width": "100% !important",
         },
