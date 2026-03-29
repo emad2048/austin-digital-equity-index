@@ -21,6 +21,9 @@ sdist/
 var/
 wheels/
 data/
+!data/analysis/
+!data/analysis/*.json
+!data/raw/acs_demographics.csv
 share/python-wheels/
 *.egg-info/
 .installed.cfg

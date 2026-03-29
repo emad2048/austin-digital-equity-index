@@ -118,7 +118,6 @@ def build_gentrification_chart() -> go.Figure:
         font=dict(color="#2C2C2A"),
         xaxis=dict(
             title="Mean DII Score",
-            titlefont=dict(color="#2C2C2A"),
             tickfont=dict(color="#2C2C2A"),
             range=[0, 100],
             showgrid=False,
