@@ -267,11 +267,11 @@ page = option_menu(
             "font-size": "1rem",
         },
         "nav-link": {
-            "color": "#2C2C2A",
+            "color": "#0F6E56",
             "font-size": "1.15rem",
             "font-weight": "500",
             "padding": "8px 20px",
-            "border": "1px solid #E0DBD4",
+            "border": "1px solid #0F6E56",
             "border-radius": "6px",
             "background-color": "#FFFFFF",
         },
