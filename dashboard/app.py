@@ -140,6 +140,18 @@ st.markdown("""
     }
     [data-testid="stSidebar"] { display: none !important; }
     [data-testid="collapsedControl"] { display: none !important; }
+    footer { visibility: hidden !important; }
+    footer:after {
+        content: '';
+        visibility: hidden;
+        display: block;
+        height: 0;
+        clear: both;
+    }
+    [data-testid="stbottom"] { display: none !important; }
+    .stBottom { display: none !important; }
+    [data-testid="stStatusWidget"] { display: none !important; }
+    .main .block-container { padding-bottom: 1rem !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -228,53 +240,50 @@ COLORS = {
 }
 
 # ── Navigation ─────────────────────────────────────────────────────────────────
-col_logo, col_nav = st.columns([1, 3])
-with col_logo:
-    st.markdown(
-        "<div style='padding: 14px 0 10px 0;'>"
-        "<span style='font-size:2.0rem; font-weight:700; color:#0F6E56;'>"
-        "Austin Digital Equity Index</span></div>",
-        unsafe_allow_html=True
-    )
-with col_nav:
-    page = option_menu(
-        menu_title=None,
-        options=["The Case", "The Map", "The Evidence", "Take Action"],
-        icons=["file-text", "map", "bar-chart", "lightning"],
-        orientation="horizontal",
-        default_index=0,
-        styles={
-            "container": {
-                "background-color": "#F7F5F2",
-                "padding": "8px 0 0 0",
-                "gap": "8px",
-            },
-            "icon": {
-                "color": "#BA7517",
-                "font-size": "1rem",
-            },
-            "nav-link": {
-                "color": "#2C2C2A",
-                "font-size": "1.15rem",
-                "font-weight": "500",
-                "padding": "10px 20px",
-                "border": "1px solid #E0DBD4",
-                "border-radius": "6px",
-                "background-color": "#FFFFFF",
-            },
-            "nav-link-hover": {
-                "background-color": "#F0EDE8",
-            },
-            "nav-link-selected": {
-                "background-color": "#0F6E56",
-                "color": "white",
-                "border": "1px solid #0F6E56",
-                "font-weight": "600",
-                "font-size": "1.15rem",
-            },
+page = option_menu(
+    menu_title="Austin Digital Equity Index",
+    options=["The Case", "The Map", "The Evidence", "Take Action"],
+    icons=["file-text", "map", "bar-chart", "lightning"],
+    orientation="horizontal",
+    default_index=0,
+    styles={
+        "container": {
+            "background-color": "#E8F4F0",
+            "padding": "8px 24px",
+            "margin": "0 -1rem 1rem -1rem",
+            "border-bottom": "2px solid #0F6E56",
         },
-    )
-st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+        "menu-title": {
+            "color": "#0F6E56",
+            "font-size": "1.4rem",
+            "font-weight": "700",
+            "padding-right": "24px",
+            "border-right": "2px solid rgba(15,110,86,0.3)",
+            "margin-right": "24px",
+            "white-space": "nowrap",
+        },
+        "icon": {
+            "color": "#BA7517",
+            "font-size": "1rem",
+        },
+        "nav-link": {
+            "color": "#2C2C2A",
+            "font-size": "1.15rem",
+            "font-weight": "500",
+            "padding": "8px 20px",
+            "border": "1px solid #E0DBD4",
+            "border-radius": "6px",
+            "background-color": "#FFFFFF",
+        },
+        "nav-link-selected": {
+            "background-color": "#0F6E56",
+            "color": "white",
+            "border": "1px solid #0F6E56",
+            "font-weight": "600",
+            "font-size": "1.15rem",
+        },
+    },
+)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 1 — THE CASE
@@ -282,14 +291,20 @@ st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
 if page == "The Case":
 
     # ── Section 1: Project purpose ────────────────────────────────────────────
-    st.markdown("<h2 style='color:#0F6E56; margin-bottom:8px;'>Austin Digital Equity Index</h2>",
-                unsafe_allow_html=True)
     st.markdown(
-        "East Austin has a documented history of racial and economic marginalization. "
-        "This project asks a simple question: are those patterns visible in how businesses "
-        "appear online? The Austin Digital Equity Index measures digital visibility across "
-        "1,400+ small businesses in three Austin neighborhoods — East Austin, South Congress, "
-        "and The Domain."
+        "<h2 style='color:#0F6E56; margin-bottom:8px;'>"
+        "About This Project</h2>",
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        "<p style='font-size:1.45rem; font-weight:400; "
+        "color:#2C2C2A; line-height:1.7;'>"
+        "A business without a Google Maps listing, website, or Yelp presence "
+        "is invisible to potential customers. In East Austin, that invisibility "
+        "is not random. The Austin Digital Equity Index measures this gap across "
+        "1,400+ small businesses in three Austin neighborhoods. "
+        "The findings point toward solutions.</p>",
+        unsafe_allow_html=True
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
