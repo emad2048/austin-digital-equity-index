@@ -16,72 +16,77 @@ def build_gentrification_chart() -> go.Figure:
     tracts.sort(key=lambda t: t["mean_dii"], reverse=True)
 
     color_map = {
-        "Active Displacement Risk":  "#2E86AB",
-        "Chronic Displacement Risk": "#888888",
+        "Active Displacement Risk":  "#4A90D9",
+        "Chronic Displacement Risk": "#BA7517",
         "Vulnerable":                "#C0392B",
     }
 
-    labels     = [t["label"]    for t in tracts]
-    x_vals     = [t["mean_dii"] for t in tracts]
-    colors     = [color_map.get(t["displacement"], "#2E86AB") for t in tracts]
-    customdata = [
-        [t["pct_minority"], t["med_income"], t["displacement"], t["gentrifica"]]
-        for t in tracts
-    ]
-
     jt_index = next(i for i, t in enumerate(tracts) if t["label"] == "Johnston Terrace")
 
-    bar = go.Bar(
-        orientation="h",
-        x=x_vals,
-        y=labels,
-        marker_color=colors,
-        customdata=customdata,
-        hovertemplate=(
-            "<b>%{y}</b><br>"
-            "DII Score: %{x:.1f}<br>"
-            "Minority: %{customdata[0]}%<br>"
-            "Median Income: $%{customdata[1]:,}<br>"
-            "Displacement: %{customdata[2]}<br>"
-            "<extra></extra>"
-        ),
-    )
+    traces = []
+    seen = set()
+    for t in tracts:
+        disp = t["displacement"]
+        color = color_map.get(disp, "#4A90D9")
+        show = disp not in seen
+        seen.add(disp)
+        traces.append(go.Bar(
+            orientation="h",
+            x=[t["mean_dii"]],
+            y=[t["label"]],
+            marker_color=color,
+            name=disp,
+            showlegend=show,
+            legendgroup=disp,
+            customdata=[[
+                t["pct_minority"], t["med_income"],
+                t["displacement"], t["gentrifica"]
+            ]],
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "DII Score: %{x:.1f}<br>"
+                "Minority: %{customdata[0]}%<br>"
+                "Median Income: $%{customdata[1]:,}<br>"
+                "Displacement: %{customdata[2]}<br>"
+                "<extra></extra>"
+            ),
+        ))
 
     annotations = [
         dict(
             x=54.2, y=7.6,
             text="South Congress avg (54.2)",
-            font=dict(color="#27AE60", size=10),
+            font=dict(color="#BA7517", size=10),
             showarrow=False,
             xanchor="left",
         ),
         dict(
             x=48.5, y=jt_index,
             text="Despite $142k median income,<br>digital gap persists",
-            font=dict(color="#CCCCCC", size=10),
+            font=dict(color="#2C2C2A", size=10),
             xanchor="left",
             showarrow=True,
-            arrowcolor="#CCCCCC",
+            arrowcolor="#2C2C2A",
             arrowwidth=1,
         ),
         dict(
             x=96, y=0.5,
-            text="Later-stage / higher DII",
-            font=dict(color="#888888", size=9),
+            text="<b>Later-stage</b><br>higher DII",
+            font=dict(color="#5F5E5A", size=11),
             showarrow=False,
             xanchor="left",
         ),
         dict(
             x=96, y=3.5,
-            text="Active displacement",
-            font=dict(color="#888888", size=9),
+            text="<b>Active</b><br>displacement",
+            font=dict(color="#5F5E5A", size=11),
             showarrow=False,
             xanchor="left",
         ),
         dict(
             x=96, y=6.5,
-            text="Early-stage / lowest DII",
-            font=dict(color="#888888", size=9),
+            text="<b>Early-stage</b><br>lowest DII",
+            font=dict(color="#5F5E5A", size=11),
             showarrow=False,
             xanchor="left",
         ),
@@ -92,7 +97,7 @@ def build_gentrification_chart() -> go.Figure:
                 "Displacement classifications from City of Austin Displacement Risk Areas 2022 (updated Oct 2024).<br>"
                 "Patterns are observational and do not imply causation."
             ),
-            font=dict(color="#666666", size=9),
+            font=dict(color="#888780", size=9),
             showarrow=False,
             xanchor="left",
         ),
@@ -103,21 +108,43 @@ def build_gentrification_chart() -> go.Figure:
             type="line",
             x0=54.2, x1=54.2,
             y0=-0.5, y1=7.5,
-            line=dict(color="#27AE60", width=1.5, dash="dash"),
+            line=dict(color="#BA7517", width=1.5, dash="dash"),
         )
     ]
 
     layout = go.Layout(
-        paper_bgcolor="#0E1117",
-        plot_bgcolor="#0E1117",
-        font=dict(color="white"),
-        xaxis=dict(title="Mean DII Score", range=[0, 100], showgrid=False, zeroline=False),
-        yaxis=dict(showgrid=False, zeroline=False),
-        margin=dict(l=140, r=120, t=60, b=80),
+        paper_bgcolor="#F7F5F2",
+        plot_bgcolor="#F7F5F2",
+        font=dict(color="#2C2C2A"),
+        xaxis=dict(
+            title="Mean DII Score",
+            titlefont=dict(color="#2C2C2A"),
+            tickfont=dict(color="#2C2C2A"),
+            range=[0, 100],
+            showgrid=False,
+            zeroline=False,
+        ),
+        yaxis=dict(
+            showgrid=False,
+            zeroline=False,
+            tickfont=dict(color="#2C2C2A", size=12),
+        ),
+        margin=dict(l=140, r=120, t=80, b=80),
         height=420,
-        showlegend=False,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="left",
+            x=0,
+            font=dict(color="#2C2C2A", size=11),
+            bgcolor="#F7F5F2",
+            bordercolor="#E0DBD4",
+            borderwidth=1,
+        ),
         shapes=shapes,
         annotations=annotations,
     )
 
-    return go.Figure(data=[bar], layout=layout)
+    return go.Figure(data=traces, layout=layout)

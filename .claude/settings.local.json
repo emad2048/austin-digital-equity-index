@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(where python3:*)",
+      "Bash(where python:*)",
+      "Bash(python -c \"import pandas; print\\(''pandas ok'', pandas.__version__\\)\")",
+      "WebFetch(domain:data.austintexas.gov)",
+      "WebFetch(domain:catalog.data.gov)",
+      "WebSearch",
+      "WebFetch(domain:sites.utexas.edu)",
+      "WebFetch(domain:www.austintexas.gov)"
+    ]
+  }
+}

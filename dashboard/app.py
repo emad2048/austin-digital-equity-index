@@ -8,6 +8,7 @@ import streamlit as st
 
 from components.neighborhood_map import build_map_1, build_map_2
 from components.gentrification_chart import build_gentrification_chart
+from streamlit_option_menu import option_menu
 
 # Resolve data paths relative to the project root (one level up from dashboard/)
 _ROOT = Path(__file__).resolve().parent.parent
@@ -17,101 +18,134 @@ st.set_page_config(layout="wide", page_title="Austin Digital Equity Index")
 
 st.markdown("""
 <style>
-    [data-testid="stAppViewContainer"] { background-color: #0E1117; }
-    [data-testid="stSidebar"] { background-color: #0E1117; }
-    body, p, li, span, div { color: white; }
+    [data-testid="stAppViewContainer"] { background-color: #F7F5F2; }
+    [data-testid="stSidebar"] { background-color: #F7F5F2; }
+    body, p, li, span, div { color: #2C2C2A; }
     .stat-card {
-        background: #1E1E2E;
-        border: 1px solid #333;
+        background: #FFFFFF;
+        border: 1px solid #E0DBD4;
         border-radius: 8px;
         padding: 18px 20px 14px;
         text-align: center;
     }
-    .stat-metric { font-size: 2rem; font-weight: 700; color: #E05C1A; }
-    .stat-label  { font-size: 0.95rem; color: #CCCCCC; margin: 6px 0 2px; }
-    .stat-sub    { font-size: 0.8rem; color: #888888; }
+    .stat-metric { font-size: 2rem; font-weight: 700; color: #0F6E56; }
+    .stat-label  { font-size: 1.05rem; color: #5F5E5A; margin: 6px 0 2px; }
+    .stat-sub    { font-size: 0.9rem; color: #888780; }
     .action-card {
-        background: #1E1E2E;
-        border: 1px solid #333;
+        background: #FFFFFF;
+        border: 1px solid #E0DBD4;
         border-radius: 8px;
         padding: 18px 20px;
     }
-    .action-pts  { font-size: 1.4rem; font-weight: 700; color: #27AE60; }
-    .action-title{ font-size: 1.05rem; font-weight: 600; color: white; margin-bottom: 8px; }
-    .action-body { font-size: 0.88rem; color: #BBBBBB; }
+    .action-pts  { font-size: 1.4rem; font-weight: 700; color: #0F6E56; }
+    .action-title{ font-size: 1.05rem; font-weight: 600; color: #2C2C2A; margin-bottom: 8px; }
+    .action-body { font-size: 0.88rem; color: #5F5E5A; }
     .actor-card  {
-        background: #1E1E2E;
-        border-left: 3px solid #E05C1A;
+        background: #FFFFFF;
+        border-left: 3px solid #BA7517;
         border-radius: 4px;
         padding: 14px 16px;
     }
-    .actor-title { font-size: 1rem; font-weight: 600; color: white; margin-bottom: 6px; }
-    .actor-body  { font-size: 0.88rem; color: #BBBBBB; }
+    .actor-title { font-size: 1rem; font-weight: 600; color: #2C2C2A; margin-bottom: 6px; }
+    .actor-body  { font-size: 0.88rem; color: #5F5E5A; }
     .callout-box {
-        background: #1E1E2E;
-        border-left: 4px solid #E05C1A;
+        background: #FFFFFF;
+        border-left: 4px solid #BA7517;
         border-radius: 4px;
         padding: 16px 20px;
-        font-size: 1.05rem;
-        color: #EEEEEE;
+        font-size: 1.15rem;
+        color: #2C2C2A;
         margin: 16px 0;
     }
     .transparent-box {
-        background: rgba(30, 30, 46, 0.35);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(15, 110, 86, 0.08);
+        border: 1px solid rgba(15, 110, 86, 0.25);
         border-radius: 6px;
         padding: 10px 12px;
-        color: #EEEEEE;
+        color: #2C2C2A;
         margin: 6px 0 12px;
     }
     .dim-card {
-        background: #1E1E2E;
-        border: 1px solid #333;
+        background: #FFFFFF;
+        border: 1px solid #E0DBD4;
         border-radius: 8px;
         padding: 14px 12px;
         text-align: center;
     }
     .dim-card .dim-pts {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: #E05C1A;
+        color: #0F6E56;
         margin: 6px 0;
     }
     .dim-card .dim-name {
-        font-size: 0.9rem;
+        font-size: 1.05rem;
         font-weight: 600;
-        color: white;
+        color: #2C2C2A;
     }
     .dim-card .dim-desc {
-        font-size: 0.78rem;
-        color: #999999;
+        font-size: 0.9rem;
+        color: #888780;
         margin-top: 4px;
     }
     .finding-card {
-        background: #1E1E2E;
-        border: 1px solid #333;
-        border-left: 4px solid #E05C1A;
+        background: #FFFFFF;
+        border: 1px solid #E0DBD4;
+        border-left: 4px solid #BA7517;
         border-radius: 8px;
         padding: 20px;
         height: 100%;
     }
     .finding-card .finding-text {
-        font-size: 0.95rem;
-        color: #EEEEEE;
+        font-size: 1.05rem;
+        color: #2C2C2A;
         line-height: 1.6;
     }
     .finding-card .finding-stat {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
         font-weight: 700;
-        color: #E05C1A;
+        color: #0F6E56;
         margin-bottom: 10px;
     }
+    h1, h2, h3, h4, h5, h6 {
+        color: #0F6E56 !important;
+        font-size: 2.2rem !important;
+    }
+    [data-testid="stMarkdownContainer"] p {
+        color: #2C2C2A !important;
+    }
+    [data-testid="stMarkdownContainer"] strong {
+        color: #2C2C2A !important;
+    }
+    label, .stRadio label, .stSelectbox label {
+        color: #2C2C2A !important;
+    }
+    .stCaption {
+        color: #5F5E5A !important;
+        font-size: 1rem !important;
+    }
+    .section-label {
+        font-size: 1.45rem;
+        font-weight: 600;
+        color: #0F6E56;
+        border-left: 3px solid #0F6E56;
+        padding-left: 10px;
+        margin: 24px 0 8px 0;
+        line-height: 1.4;
+    }
+    .section-divider {
+        border: none;
+        border-top: 1px solid #E0DBD4;
+        margin: 28px 0 20px 0;
+    }
+    [data-testid="stSidebar"] { display: none !important; }
+    [data-testid="collapsedControl"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Data loading ───────────────────────────────────────────────────────────────
-DARK = dict(paper_bgcolor="#0E1117", plot_bgcolor="#0E1117",
-            font=dict(color="white"))
+DARK = dict(paper_bgcolor="#F7F5F2", plot_bgcolor="#F7F5F2",
+            font=dict(color="#2C2C2A", size=14))
 
 
 def _load_json(rel_path):
@@ -188,16 +222,59 @@ yelp_dist     = load_yelp_only_distribution()
 df_acs        = load_acs_demographics()
 
 COLORS = {
-    "East Austin":    "#E05C1A",
-    "South Congress": "#27AE60",
-    "The Domain":     "#2E86AB",
+    "East Austin":    "#0F6E56",
+    "South Congress": "#BA7517",
+    "The Domain":     "#4A90D9",
 }
 
 # ── Navigation ─────────────────────────────────────────────────────────────────
-page = st.sidebar.radio(
-    "Navigate",
-    ["The Case", "The Map", "The Evidence", "Take Action"],
-)
+col_logo, col_nav = st.columns([1, 3])
+with col_logo:
+    st.markdown(
+        "<div style='padding: 14px 0 10px 0;'>"
+        "<span style='font-size:2.0rem; font-weight:700; color:#0F6E56;'>"
+        "Austin Digital Equity Index</span></div>",
+        unsafe_allow_html=True
+    )
+with col_nav:
+    page = option_menu(
+        menu_title=None,
+        options=["The Case", "The Map", "The Evidence", "Take Action"],
+        icons=["file-text", "map", "bar-chart", "lightning"],
+        orientation="horizontal",
+        default_index=0,
+        styles={
+            "container": {
+                "background-color": "#F7F5F2",
+                "padding": "8px 0 0 0",
+                "gap": "8px",
+            },
+            "icon": {
+                "color": "#BA7517",
+                "font-size": "1rem",
+            },
+            "nav-link": {
+                "color": "#2C2C2A",
+                "font-size": "1.15rem",
+                "font-weight": "500",
+                "padding": "10px 20px",
+                "border": "1px solid #E0DBD4",
+                "border-radius": "6px",
+                "background-color": "#FFFFFF",
+            },
+            "nav-link-hover": {
+                "background-color": "#F0EDE8",
+            },
+            "nav-link-selected": {
+                "background-color": "#0F6E56",
+                "color": "white",
+                "border": "1px solid #0F6E56",
+                "font-weight": "600",
+                "font-size": "1.15rem",
+            },
+        },
+    )
+st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 1 — THE CASE
@@ -205,7 +282,7 @@ page = st.sidebar.radio(
 if page == "The Case":
 
     # ── Section 1: Project purpose ────────────────────────────────────────────
-    st.markdown("<h2 style='color:white; margin-bottom:8px;'>Austin Digital Equity Index</h2>",
+    st.markdown("<h2 style='color:#0F6E56; margin-bottom:8px;'>Austin Digital Equity Index</h2>",
                 unsafe_allow_html=True)
     st.markdown(
         "East Austin has a documented history of racial and economic marginalization. "
@@ -218,7 +295,7 @@ if page == "The Case":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 2: How the DII works ──────────────────────────────────────────
-    st.markdown("<h3 style='color:white;'>How we measure digital inclusion</h3>",
+    st.markdown("<h3 style='color:#0F6E56;'>How we measure digital inclusion</h3>",
                 unsafe_allow_html=True)
     st.markdown("Each business receives a Digital Inclusion Index (DII) score from 0–100 across five dimensions:")
 
@@ -250,7 +327,7 @@ if page == "The Case":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 3: Headline findings ─────────────────────────────────────────
-    st.markdown("<h3 style='color:white;'>What we found</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#0F6E56;'>What we found</h3>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     findings = [
@@ -286,8 +363,10 @@ if page == "The Case":
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "The Map":
     st.markdown(
-        "**East Austin's digital inclusion gap is geographic — and it follows neighborhood "
-        "lines drawn by decades of policy.**"
+        "<p style='font-size:2.0rem; font-weight:600; color:#2C2C2A;'>"
+        "East Austin's digital inclusion gap is geographic — and it follows "
+        "neighborhood lines drawn by decades of policy.</p>",
+        unsafe_allow_html=True
     )
 
     st.markdown("#### A 15-point gap exists within East Austin — some tracts thriving, others left behind")
@@ -313,16 +392,14 @@ elif page == "The Map":
 elif page == "The Evidence":
 
     # ── Section 1: Strip plot ─────────────────────────────────────────────────
-    st.markdown(
-        "**East Austin's gap is specific — the two comparison neighborhoods "
-        "are statistically indistinguishable from each other.**"
-    )
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>East Austin's gap is specific — the two comparison neighborhoods are statistically indistinguishable from each other.</div>", unsafe_allow_html=True)
 
     if not df_biz.empty:
         nbhd_data = [
-            {"name": "East Austin",    "mean": 47.9, "ci_low": 46.7, "ci_high": 49.1, "color": "#E05C1A"},
-            {"name": "South Congress", "mean": 54.2, "ci_low": 52.3, "ci_high": 56.1, "color": "#27AE60"},
-            {"name": "The Domain",     "mean": 53.0, "ci_low": 50.5, "ci_high": 55.5, "color": "#2E86AB"},
+            {"name": "East Austin",    "mean": 47.9, "ci_low": 46.7, "ci_high": 49.1, "color": "#0F6E56"},
+            {"name": "South Congress", "mean": 54.2, "ci_low": 52.3, "ci_high": 56.1, "color": "#BA7517"},
+            {"name": "The Domain",     "mean": 53.0, "ci_low": 50.5, "ci_high": 55.5, "color": "#4A90D9"},
         ]
         fig_compare = go.Figure()
         for n in nbhd_data:
@@ -336,7 +413,7 @@ elif page == "The Evidence":
                     symmetric=False,
                     array=[n["ci_high"] - n["mean"]],
                     arrayminus=[n["mean"] - n["ci_low"]],
-                    color="white",
+                    color="#2C2C2A",
                     thickness=2,
                     width=6,
                 ),
@@ -344,17 +421,23 @@ elif page == "The Evidence":
                 hovertemplate=f"{n['name']}<br>Mean DII: {n['mean']}<br>95% CI: [{n['ci_low']}, {n['ci_high']}]<extra></extra>",
             ))
         fig_compare.add_vline(
-            x=54.2, line_dash="dash", line_color="#27AE60", line_width=1.5
+            x=54.2, line_dash="dash", line_color="#BA7517", line_width=1.5
         )
         fig_compare.update_layout(
             **DARK,
             xaxis=dict(
                 title="Mean DII Score",
+                titlefont=dict(color="#2C2C2A"),
+                tickfont=dict(color="#2C2C2A"),
                 range=[0, 70],
                 showgrid=False,
                 zeroline=False,
             ),
-            yaxis=dict(showgrid=False, zeroline=False),
+            yaxis=dict(
+                tickfont=dict(color="#2C2C2A"),
+                showgrid=False,
+                zeroline=False,
+            ),
             margin=dict(l=140, r=40, t=20, b=40),
             height=220,
             bargap=0.4,
@@ -376,21 +459,14 @@ elif page == "The Evidence":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 2: Dimension Breakdown ───────────────────────────────────────
-    st.markdown(
-        "**The gap is not about Google Maps — East Austin trails most on "
-        "Website quality, Yelp presence, and Info Accuracy.**"
-    )
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>The gap is not about Google Maps — East Austin trails most on Website quality, Yelp presence, and Info Accuracy.</div>", unsafe_allow_html=True)
 
     if dim_breakdown:
         dims = [row["dimension"] for row in dim_breakdown]
         nbhds_order = ["East Austin", "South Congress", "The Domain"]
-        highlighted = {"Website", "Yelp", "Info Accuracy"}
 
         fig_bar = go.Figure()
-        ea_bar_colors = [
-            "#E05C1A" if any(h in d for h in highlighted) else "#A83000"
-            for d in dims
-        ]
 
         for nbhd in nbhds_order:
             vals = [row[nbhd]["pct_of_max"] for row in dim_breakdown]
@@ -398,27 +474,33 @@ elif page == "The Evidence":
                 name=nbhd,
                 x=dims,
                 y=vals,
-                marker_color=ea_bar_colors if nbhd == "East Austin" else ["#555555"] * len(dims),
+                marker_color=COLORS[nbhd],
                 opacity=0.9,
             ))
-
-        # Dotted reference lines at East Austin pct_of_max values
-        ea_vals = [row["East Austin"]["pct_of_max"] for row in dim_breakdown]
-        for i, (dim, val) in enumerate(zip(dims, ea_vals)):
-            fig_bar.add_shape(
-                type="line",
-                x0=i - 0.45, x1=i + 0.45,
-                y0=val, y1=val,
-                line=dict(color="#E05C1A", width=1.5, dash="dot"),
-            )
 
         fig_bar.update_layout(
             **DARK,
             barmode="group",
-            xaxis=dict(title="", showgrid=False, zeroline=False),
-            yaxis=dict(title="% of Maximum Score", showgrid=False, zeroline=False,
-                       range=[0, 105]),
-            legend=dict(bgcolor="#0E1117", bordercolor="#333", borderwidth=1),
+            xaxis=dict(
+                title="",
+                tickfont=dict(color="#2C2C2A"),
+                showgrid=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                title="% of Maximum Score",
+                titlefont=dict(color="#2C2C2A"),
+                tickfont=dict(color="#2C2C2A"),
+                showgrid=False,
+                zeroline=False,
+                range=[0, 105],
+            ),
+            legend=dict(
+                bgcolor="#F7F5F2",
+                bordercolor="#E0DBD4",
+                borderwidth=1,
+                font=dict(color="#2C2C2A"),
+            ),
             margin=dict(l=40, r=20, t=20, b=40),
             height=380,
         )
@@ -428,12 +510,10 @@ elif page == "The Evidence":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>Within East Austin, digital inclusion is lowest in tracts facing early-stage gentrification and displacement pressure.</div>", unsafe_allow_html=True)
     st.markdown(
-        "**Within East Austin, digital inclusion is lowest in tracts facing "
-        "early-stage gentrification and displacement pressure.**"
-    )
-    st.markdown(
-        "<p style='color:#999999; font-size:0.9rem; margin-top:-8px;'>"
+        "<p style='color:#5F5E5A; font-size:0.9rem; margin-top:-8px;'>"
         "A ~15-point gap separates the highest- and lowest-performing tracts "
         "within East Austin alone.</p>",
         unsafe_allow_html=True
@@ -442,10 +522,8 @@ elif page == "The Evidence":
     st.plotly_chart(build_gentrification_chart(), use_container_width=True)
 
     # ── Section 3: Demographic Context ───────────────────────────────────────
-    st.markdown(
-        "**The digital inclusion gap follows neighborhood demographics "
-        "— not infrastructure.**"
-    )
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>The digital inclusion gap follows neighborhood demographics — not infrastructure.</div>", unsafe_allow_html=True)
     st.info(
         "Census tracts with higher minority population shares show significantly lower DII scores — "
         "the strongest demographic predictor in the dataset (r = \u22120.71). Broadband access shows "
@@ -456,9 +534,8 @@ elif page == "The Evidence":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 4: Business Explorer ─────────────────────────────────────────
-    st.markdown(
-        "**Explore the underlying data — filter by neighborhood and business category.**"
-    )
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>Explore the underlying data — filter by neighborhood and business category.</div>", unsafe_allow_html=True)
 
     if not df_biz.empty:
         nbhd_options = ["All"] + sorted(df_biz["neighborhood"].dropna().unique().tolist())
@@ -526,7 +603,8 @@ elif page == "Take Action":
             </div>""", unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("### Who should act")
+    st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+    st.markdown("<div class='section-label'>Who should act</div>", unsafe_allow_html=True)
 
     a1, a2, a3 = st.columns(3)
     actors = [
