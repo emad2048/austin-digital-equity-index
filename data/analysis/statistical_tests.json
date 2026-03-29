@@ -1,0 +1,35 @@
+[
+  {
+    "comparison": "East Austin vs South Congress",
+    "mean_a": 47.869,
+    "mean_b": 54.207,
+    "mean_diff_a_minus_b": -6.338,
+    "t_stat": -4.4577,
+    "p_value": 1e-05,
+    "cohens_d": -0.3106,
+    "bonferroni_alpha": 0.0167,
+    "clears_bonferroni": true
+  },
+  {
+    "comparison": "East Austin vs The Domain",
+    "mean_a": 47.869,
+    "mean_b": 53.032,
+    "mean_diff_a_minus_b": -5.164,
+    "t_stat": -3.0388,
+    "p_value": 0.002569,
+    "cohens_d": -0.25,
+    "bonferroni_alpha": 0.0167,
+    "clears_bonferroni": true
+  },
+  {
+    "comparison": "South Congress vs The Domain",
+    "mean_a": 54.207,
+    "mean_b": 53.032,
+    "mean_diff_a_minus_b": 1.174,
+    "t_stat": 0.601,
+    "p_value": 0.548163,
+    "cohens_d": 0.0539,
+    "bonferroni_alpha": 0.0167,
+    "clears_bonferroni": false
+  }
+]

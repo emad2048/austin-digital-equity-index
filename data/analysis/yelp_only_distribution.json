@@ -1,0 +1,48 @@
+{
+  "all_records": [
+    {
+      "neighborhood": "East Austin",
+      "yelp_only_count": 1784,
+      "total_records": 2586,
+      "pct_yelp_only": 69.0,
+      "cut": "all_records"
+    },
+    {
+      "neighborhood": "South Congress",
+      "yelp_only_count": 1494,
+      "total_records": 1835,
+      "pct_yelp_only": 81.4,
+      "cut": "all_records"
+    },
+    {
+      "neighborhood": "The Domain",
+      "yelp_only_count": 950,
+      "total_records": 1205,
+      "pct_yelp_only": 78.8,
+      "cut": "all_records"
+    }
+  ],
+  "inscope_only": [
+    {
+      "neighborhood": "East Austin",
+      "yelp_only_count": 1602,
+      "total_records": 2340,
+      "pct_yelp_only": 68.5,
+      "cut": "inscope_only"
+    },
+    {
+      "neighborhood": "South Congress",
+      "yelp_only_count": 1313,
+      "total_records": 1618,
+      "pct_yelp_only": 81.1,
+      "cut": "inscope_only"
+    },
+    {
+      "neighborhood": "The Domain",
+      "yelp_only_count": 793,
+      "total_records": 1010,
+      "pct_yelp_only": 78.5,
+      "cut": "inscope_only"
+    }
+  ]
+}

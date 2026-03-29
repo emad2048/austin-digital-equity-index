@@ -1,0 +1,136 @@
+{
+  "median_household_income": {
+    "pearson_r": 0.5414,
+    "p_value": 0.055996,
+    "n_tracts": 13
+  },
+  "tract_data": [
+    {
+      "geoid": "48453000803",
+      "neighborhood": "East Austin",
+      "median_income": 83833.0,
+      "mean_dii": 49.763,
+      "n_businesses": 93,
+      "pct_minority": 0.438,
+      "pct_broadband": 0.984
+    },
+    {
+      "geoid": "48453000804",
+      "neighborhood": "East Austin",
+      "median_income": 73359.0,
+      "mean_dii": 46.182,
+      "n_businesses": 77,
+      "pct_minority": 0.597,
+      "pct_broadband": 0.921
+    },
+    {
+      "geoid": "48453000902",
+      "neighborhood": "East Austin",
+      "median_income": 104349.0,
+      "mean_dii": 57.44,
+      "n_businesses": 109,
+      "pct_minority": 0.491,
+      "pct_broadband": 0.875
+    },
+    {
+      "geoid": "48453001312",
+      "neighborhood": "South Congress",
+      "median_income": 120890.0,
+      "mean_dii": 57.695,
+      "n_businesses": 118,
+      "pct_minority": 0.334,
+      "pct_broadband": 0.905
+    },
+    {
+      "geoid": "48453001401",
+      "neighborhood": "South Congress",
+      "median_income": 127621.0,
+      "mean_dii": 51.2,
+      "n_businesses": 80,
+      "pct_minority": 0.198,
+      "pct_broadband": 0.888
+    },
+    {
+      "geoid": "48453002108",
+      "neighborhood": "East Austin",
+      "median_income": 58459.0,
+      "mean_dii": 42.065,
+      "n_businesses": 107,
+      "pct_minority": 0.738,
+      "pct_broadband": 0.992
+    },
+    {
+      "geoid": "48453002111",
+      "neighborhood": "East Austin",
+      "median_income": 142905.0,
+      "mean_dii": 48.088,
+      "n_businesses": 102,
+      "pct_minority": 0.604,
+      "pct_broadband": 0.939
+    },
+    {
+      "geoid": "48453002320",
+      "neighborhood": "East Austin",
+      "median_income": 85638.0,
+      "mean_dii": 46.5,
+      "n_businesses": 90,
+      "pct_minority": 0.672,
+      "pct_broadband": 0.911
+    },
+    {
+      "geoid": "48453002321",
+      "neighborhood": "East Austin",
+      "median_income": 53846.0,
+      "mean_dii": 42.446,
+      "n_businesses": 74,
+      "pct_minority": 0.685,
+      "pct_broadband": 0.787
+    },
+    {
+      "geoid": "48453002326",
+      "neighborhood": "East Austin",
+      "median_income": 42317.0,
+      "mean_dii": 48.256,
+      "n_businesses": 86,
+      "pct_minority": 0.617,
+      "pct_broadband": 0.779
+    },
+    {
+      "geoid": "48453002403",
+      "neighborhood": "South Congress",
+      "median_income": 91016.0,
+      "mean_dii": 52.607,
+      "n_businesses": 107,
+      "pct_minority": 0.431,
+      "pct_broadband": 0.943
+    },
+    {
+      "geoid": "48453030800",
+      "neighborhood": "The Domain",
+      "median_income": 79269.0,
+      "mean_dii": 52.304,
+      "n_businesses": 102,
+      "pct_minority": 0.479,
+      "pct_broadband": 0.986
+    },
+    {
+      "geoid": "48453045400",
+      "neighborhood": "The Domain",
+      "median_income": 89066.0,
+      "mean_dii": 53.678,
+      "n_businesses": 115,
+      "pct_minority": 0.539,
+      "pct_broadband": 1.0
+    }
+  ],
+  "pct_minority": {
+    "pearson_r": -0.7089,
+    "p_value": 0.006667,
+    "n_tracts": 13
+  },
+  "pct_broadband": {
+    "pearson_r": 0.1556,
+    "p_value": 0.611654,
+    "n_tracts": 13
+  }
+}

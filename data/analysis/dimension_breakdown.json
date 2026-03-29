@@ -1,0 +1,82 @@
+[
+  {
+    "dimension": "Google Maps",
+    "max_pts": 25,
+    "East Austin": {
+      "mean_raw": 23.659,
+      "pct_of_max": 94.6
+    },
+    "South Congress": {
+      "mean_raw": 24.026,
+      "pct_of_max": 96.1
+    },
+    "The Domain": {
+      "mean_raw": 23.894,
+      "pct_of_max": 95.6
+    }
+  },
+  {
+    "dimension": "Website",
+    "max_pts": 25,
+    "East Austin": {
+      "mean_raw": 14.393,
+      "pct_of_max": 57.6
+    },
+    "South Congress": {
+      "mean_raw": 16.59,
+      "pct_of_max": 66.4
+    },
+    "The Domain": {
+      "mean_raw": 15.779,
+      "pct_of_max": 63.1
+    }
+  },
+  {
+    "dimension": "Yelp",
+    "max_pts": 20,
+    "East Austin": {
+      "mean_raw": 3.146,
+      "pct_of_max": 15.7
+    },
+    "South Congress": {
+      "mean_raw": 5.243,
+      "pct_of_max": 26.2
+    },
+    "The Domain": {
+      "mean_raw": 5.318,
+      "pct_of_max": 26.6
+    }
+  },
+  {
+    "dimension": "Social Media",
+    "max_pts": 15,
+    "East Austin": {
+      "mean_raw": 4.936,
+      "pct_of_max": 32.9
+    },
+    "South Congress": {
+      "mean_raw": 5.544,
+      "pct_of_max": 37.0
+    },
+    "The Domain": {
+      "mean_raw": 5.23,
+      "pct_of_max": 34.9
+    }
+  },
+  {
+    "dimension": "Info Accuracy",
+    "max_pts": 15,
+    "East Austin": {
+      "mean_raw": 1.734,
+      "pct_of_max": 11.6
+    },
+    "South Congress": {
+      "mean_raw": 2.803,
+      "pct_of_max": 18.7
+    },
+    "The Domain": {
+      "mean_raw": 2.811,
+      "pct_of_max": 18.7
+    }
+  }
+]

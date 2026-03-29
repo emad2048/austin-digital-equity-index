@@ -1,0 +1,29 @@
+[
+  {
+    "neighborhood": "East Austin",
+    "n": 738,
+    "mean_dii": 47.869,
+    "median_dii": 50.0,
+    "std_dii": 20.063,
+    "ci_95_lo": 46.419,
+    "ci_95_hi": 49.318
+  },
+  {
+    "neighborhood": "South Congress",
+    "n": 305,
+    "mean_dii": 54.207,
+    "median_dii": 50.0,
+    "std_dii": 21.218,
+    "ci_95_lo": 51.816,
+    "ci_95_hi": 56.597
+  },
+  {
+    "neighborhood": "The Domain",
+    "n": 217,
+    "mean_dii": 53.032,
+    "median_dii": 50.0,
+    "std_dii": 22.543,
+    "ci_95_lo": 50.016,
+    "ci_95_hi": 56.049
+  }
+]
