@@ -7,87 +7,155 @@ import plotly.graph_objects as go
 load_dotenv()
 MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN", "")
 
+MAPBOX_STYLE = "mapbox://styles/mapbox/outdoors-v12"
 
-def build_neighborhood_map(size_mode: str = "businesses") -> go.Figure:
-    nodes = [
-        {
-            "name": "East Austin",
-            "lat": 30.2602, "lon": -97.7205,
-            "mean_dii": 47.9,
-            "n_businesses": 738,
-            "yelp_match": "17.5% Yelp match",
-        },
-        {
-            "name": "South Congress",
-            "lat": 30.2382, "lon": -97.7520,
-            "mean_dii": 54.2,
-            "n_businesses": 306,
-            "yelp_match": "29.1% Yelp match",
-        },
-        {
-            "name": "The Domain",
-            "lat": 30.4007, "lon": -97.7223,
-            "mean_dii": 53.0,
-            "n_businesses": 217,
-            "yelp_match": "28.1% Yelp match",
-        },
+# Optional reference box (not used by maps — both use center + zoom in mapbox dicts).
+MAP_BOUNDS = dict(
+    west=-97.777441,
+    east=-97.626535,
+    north=30.44,
+    south=30.18,
+)
+
+
+def build_map_1() -> go.Figure:
+    ea_tracts = [
+        {"name": "Mueller/East 6th",   "lat": 30.2961, "lon": -97.7087, "mean_dii": 57.44},
+        {"name": "East Cesar Chavez",  "lat": 30.2601, "lon": -97.7201, "mean_dii": 49.76},
+        {"name": "Govalle",            "lat": 30.2641, "lon": -97.6891, "mean_dii": 48.26},
+        {"name": "North Loop/Airport", "lat": 30.3121, "lon": -97.6971, "mean_dii": 48.09},
+        {"name": "Johnston Terrace",   "lat": 30.2721, "lon": -97.7001, "mean_dii": 46.50},
+        {"name": "MLK/Rosewood",       "lat": 30.2841, "lon": -97.7101, "mean_dii": 46.18},
+        {"name": "East MLK",           "lat": 30.2761, "lon": -97.6821, "mean_dii": 42.45},
+        {"name": "Montopolis",         "lat": 30.2341, "lon": -97.6891, "mean_dii": 42.07},
     ]
 
-    # --- size scaling ---
-    def scale(values, lo=40, hi=90):
-        mn, mx = min(values), max(values)
-        return [lo + (v - mn) / (mx - mn) * (hi - lo) for v in values]
-
-    raw = [n["n_businesses"] for n in nodes] if size_mode == "businesses" else [n["mean_dii"] for n in nodes]
-    sizes = scale(raw)
-
-    # --- Trace 1: connector lines ---
-    pairs = [(0, 1), (0, 2), (1, 2)]
-    llat, llon = [], []
-    for a, b in pairs:
-        llat += [nodes[a]["lat"], nodes[b]["lat"], None]
-        llon += [nodes[a]["lon"], nodes[b]["lon"], None]
-
-    trace_lines = go.Scattermapbox(
-        lat=llat, lon=llon,
-        mode="lines",
-        line=dict(color="#4A4A4A", width=1.5),
+    lat_ea = [t["lat"] for t in ea_tracts]
+    lon_ea = [t["lon"] for t in ea_tracts]
+    # Black underlay (Scattermapbox has no marker.line) — reads as a border ring
+    trace_ea_border = go.Scattermapbox(
+        lat=lat_ea,
+        lon=lon_ea,
+        mode="markers",
+        marker=dict(size=44, color="#000000"),
         hoverinfo="skip",
         showlegend=False,
     )
-
-    # --- Trace 2: nodes + labels (merged — separate text trace unreliable on Scattermapbox) ---
-    trace_nodes = go.Scattermapbox(
-        lat=[n["lat"] for n in nodes],
-        lon=[n["lon"] for n in nodes],
-        mode="markers+text",
+    trace_ea = go.Scattermapbox(
+        lat=lat_ea,
+        lon=lon_ea,
+        mode="markers",
         marker=dict(
-            size=sizes,
-            color=[n["mean_dii"] for n in nodes],
-            colorscale=[[0, "#C0392B"], [0.5, "#E67E22"], [1, "#27AE60"]],
-            cmin=44,
-            cmax=56,
-            showscale=False,
+            size=40,
+            color=[t["mean_dii"] for t in ea_tracts],
+            colorscale="RdYlGn",
+            cmin=40,
+            cmax=58,
+            colorbar=dict(
+                orientation="h",
+                title=dict(
+                    text="<b>DII Score</b>",
+                    font=dict(size=14, color="white"),
+                    side="bottom",
+                ),
+                tickvals=[40, 58],
+                ticktext=["Worst", "Best"],
+                tickfont=dict(size=13, color="white"),
+                thickness=14,
+                len=0.55,
+                x=0.5,
+                xanchor="center",
+                y=-0.02,
+                yanchor="top",
+            ),
         ),
-        text=[f"{n['name']} — {n['mean_dii']} DII · {n['yelp_match']}" for n in nodes],
-        textfont=dict(color="#1A1A1A", size=13),
-        textposition="top center",
-        hoverinfo="skip",
+        text=[t["name"] for t in ea_tracts],
+        customdata=[[t["mean_dii"]] for t in ea_tracts],
+        hovertemplate="<b>%{text}</b><br>DII: %{customdata[0]}/100<extra></extra>",
         showlegend=False,
     )
 
-    fig = go.Figure(data=[trace_lines, trace_nodes])
+    fig = go.Figure(data=[trace_ea_border, trace_ea])
     fig.update_layout(
-        paper_bgcolor="#0E1117",
-        margin=dict(l=0, r=0, t=0, b=0),
-        height=480,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=0, b=90),
+        height=720,
         showlegend=False,
         mapbox=dict(
             accesstoken=MAPBOX_TOKEN,
-            style="outdoors",
-            center=dict(lat=30.32, lon=-97.74),
-            zoom=10.5,
+            style=MAPBOX_STYLE,
+            center=dict(lat=30.2750, lon=-97.7113),
+            zoom=11.7,
+            bearing=0,
+            pitch=0,
         ),
     )
 
+    fig.add_annotation(
+        xref="paper",
+        yref="paper",
+        x=0.68,
+        y=0.45,
+        text="East Austin",
+        showarrow=False,
+        font=dict(size=13, color="#1a1a1a", family="Arial", weight="bold"),
+        bgcolor="rgba(255,255,255,0.82)",
+        bordercolor="rgba(0,0,0,0.18)",
+        borderwidth=1,
+        borderpad=5,
+        xanchor="center",
+    )
+    return fig
+
+
+def build_map_2() -> go.Figure:
+    locations = [
+        {"name": "Mueller/East 6th",   "lat": 30.2961, "lon": -97.7087, "business_count": 109},
+        {"name": "East Cesar Chavez",  "lat": 30.2601, "lon": -97.7201, "business_count": 93},
+        {"name": "Govalle",            "lat": 30.2641, "lon": -97.6891, "business_count": 86},
+        {"name": "North Loop/Airport", "lat": 30.3121, "lon": -97.6971, "business_count": 102},
+        {"name": "Johnston Terrace",   "lat": 30.2721, "lon": -97.7001, "business_count": 90},
+        {"name": "MLK/Rosewood",       "lat": 30.2841, "lon": -97.7101, "business_count": 77},
+        {"name": "East MLK",           "lat": 30.2761, "lon": -97.6821, "business_count": 74},
+        {"name": "Montopolis",         "lat": 30.2341, "lon": -97.6891, "business_count": 107},
+    ]
+
+    lat_b = [l["lat"] for l in locations]
+    lon_b = [l["lon"] for l in locations]
+    trace_border = go.Scattermapbox(
+        lat=lat_b,
+        lon=lon_b,
+        mode="markers",
+        marker=dict(size=46, color="#000000", opacity=1.0, symbol="circle"),
+        hoverinfo="skip",
+        showlegend=False,
+    )
+    trace = go.Scattermapbox(
+        lat=lat_b,
+        lon=lon_b,
+        mode="markers",
+        marker=dict(size=42, color="#FF6600", opacity=1.0, symbol="circle"),
+        text=[l["name"] for l in locations],
+        customdata=[[l["business_count"]] for l in locations],
+        hovertemplate="<b>%{text}</b><br>Businesses: %{customdata[0]}<extra></extra>",
+        showlegend=False,
+    )
+
+    fig = go.Figure(data=[trace_border, trace])
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=0, b=0),
+        height=720,
+        showlegend=False,
+        mapbox=dict(
+            accesstoken=MAPBOX_TOKEN,
+            style=MAPBOX_STYLE,
+            center=dict(lat=30.2750, lon=-97.7113),
+            zoom=11.7,
+            bearing=0,
+            pitch=0,
+        ),
+    )
     return fig

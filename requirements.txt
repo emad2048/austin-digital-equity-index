@@ -1,11 +1,6 @@
-requests
-pandas
-numpy
-python-dotenv
-beautifulsoup4
-streamlit
-plotly
-scikit-learn
-xgboost
-census
-rapidfuzz
+streamlit==1.55.0
+plotly==6.6.0
+pandas==2.3.3
+numpy==2.4.2
+python-dotenv==1.1.2
+requests==2.32.5

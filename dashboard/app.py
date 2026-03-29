@@ -2,14 +2,12 @@ import json
 import os
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from components.neighborhood_map import build_map_1, build_map_2
 from components.gentrification_chart import build_gentrification_chart
-from components.neighborhood_map import build_neighborhood_map
-from components.tract_map import build_tract_map
 
 # Resolve data paths relative to the project root (one level up from dashboard/)
 _ROOT = Path(__file__).resolve().parent.parent
@@ -292,39 +290,21 @@ elif page == "The Map":
         "lines drawn by decades of policy.**"
     )
 
-    map_view = st.radio(
-        "Map view:",
-        ["East Austin tracts", "Neighborhood disparities"],
-        horizontal=True,
-    )
+    st.markdown("#### How does East Austin compare?")
+    st.caption("Circle color shows DII score. Hover for tract name and score.")
+    fig1 = build_map_1()
+    st.plotly_chart(fig1, use_container_width=True)
 
-    if map_view == "Neighborhood disparities":
-        st.markdown(
-            """
-<div class="transparent-box">
-    East Austin — 47.9 DII · 17.5% Yelp match<br>
-    South Congress — 54.2 DII · 29.1% Yelp match<br>
-    The Domain — 53.0 DII · 28.1% Yelp match
-</div>
-""",
-            unsafe_allow_html=True,
-        )
-        size_mode_label = st.radio(
-            "Size circles by:",
-            ["Number of businesses", "DII score"],
-            horizontal=True,
-        )
-        size_mode = "businesses" if size_mode_label == "Number of businesses" else "dii"
-        fig = build_neighborhood_map(size_mode)
-    else:
-        fig = build_tract_map()
-
-    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("#### Where are the businesses?")
+    st.caption("Pin markers show business count per tract. Hover for details.")
+    fig2 = build_map_2()
+    st.plotly_chart(fig2, use_container_width=True)
 
     st.info(
-        "Census tracts with higher minority population shares show significantly lower DII scores "
-        "(r = −0.71, p = 0.007). Broadband access is uniformly high across all study areas — "
-        "the barrier is not infrastructure, it is awareness and access to technical assistance."
+        "Census tracts with higher minority population shares show significantly "
+        "lower DII scores (r = \u22120.71, p = 0.007). Broadband access is uniformly "
+        "high across all study areas — the barrier is not infrastructure, it is "
+        "awareness and access to technical assistance."
     )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -466,17 +446,12 @@ elif page == "The Evidence":
         "**The digital inclusion gap follows neighborhood demographics "
         "— not infrastructure.**"
     )
-    st.markdown("""
-<div class="callout-box">
-    In census tracts where more residents are people of color, businesses
-    consistently score lower on the Digital Inclusion Index. This is the
-    strongest demographic pattern in the dataset — and it holds even after
-    accounting for income and broadband access, which is uniformly high
-    (87–100%) across all study areas. The barrier to digital inclusion is
-    not infrastructure. It is awareness, language access, and technical
-    assistance.
-</div>
-""", unsafe_allow_html=True)
+    st.info(
+        "Census tracts with higher minority population shares show significantly lower DII scores — "
+        "the strongest demographic predictor in the dataset (r = \u22120.71). Broadband access shows "
+        "no meaningful correlation, meaning lack of internet infrastructure is not driving the gap. "
+        "The barrier is awareness, language access, and technical assistance."
+    )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
