@@ -147,8 +147,7 @@ st.markdown("""
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="stStatusWidget"] { visibility: hidden !important; }
     header[data-testid="stHeader"] {
-        background: #E8F4F0 !important;
-        height: 0 !important;
+        display: none !important;
     }
     .main .block-container { padding-bottom: 1rem !important; }
 </style>
