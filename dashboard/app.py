@@ -441,12 +441,14 @@ elif page == "The Evidence":
         fig_compare.update_layout(
             **DARK,
             xaxis=dict(
-                title="Mean DII Score",
+                title=dict(text="Mean DII Score", font=dict(color="#2C2C2A")),
+                tickfont=dict(color="#2C2C2A"),
                 range=[0, 70],
                 showgrid=False,
                 zeroline=False,
             ),
             yaxis=dict(
+                tickfont=dict(color="#2C2C2A"),
                 showgrid=False,
                 zeroline=False,
             ),
@@ -495,11 +497,13 @@ elif page == "The Evidence":
             barmode="group",
             xaxis=dict(
                 title="",
+                tickfont=dict(color="#2C2C2A"),
                 showgrid=False,
                 zeroline=False,
             ),
             yaxis=dict(
-                title="% of Maximum Score",
+                title=dict(text="% of Maximum Score", font=dict(color="#2C2C2A")),
+                tickfont=dict(color="#2C2C2A"),
                 showgrid=False,
                 zeroline=False,
                 range=[0, 105],
