@@ -402,12 +402,18 @@ elif page == "The Map":
         unsafe_allow_html=True
     )
 
-    st.markdown("#### A 15-point gap exists within East Austin — some tracts thriving, others left behind")
+    st.markdown(
+        "<h4 style='color:#0F6E56;'>A 15-point gap exists within East Austin — some tracts thriving, others left behind</h4>",
+        unsafe_allow_html=True
+    )
     st.caption("Circle color shows DII score. Hover for tract name and score.")
     fig1 = build_map_1()
     st.plotly_chart(fig1, use_container_width=True)
 
-    st.markdown("#### Where are the businesses?")
+    st.markdown(
+        "<h4 style='color:#0F6E56;'>Where are the businesses?</h4>",
+        unsafe_allow_html=True
+    )
     st.caption("Pin markers show business count per tract. Hover for details.")
     fig2 = build_map_2()
     st.plotly_chart(fig2, use_container_width=True)
@@ -592,7 +598,10 @@ elif page == "The Evidence":
 # PAGE 4 — TAKE ACTION
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "Take Action":
-    st.title("The gap is measurable. The fixes are free.")
+    st.markdown(
+        "<h1 style='color:#0F6E56;'>The gap is measurable. The fixes are free.</h1>",
+        unsafe_allow_html=True
+    )
 
     st.markdown("""
     <div class="callout-box">
