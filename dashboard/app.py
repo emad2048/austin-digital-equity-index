@@ -150,6 +150,21 @@ st.markdown("""
         display: none !important;
     }
     .main .block-container { padding-bottom: 1rem !important; }
+    div[data-testid="stHorizontalBlock"] {
+        width: 100% !important;
+    }
+    .nav-link {
+        flex: 1 !important;
+        text-align: center !important;
+    }
+    ul[class*="menu"] {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+    }
+    li[class*="nav-item"] {
+        flex: 1 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
