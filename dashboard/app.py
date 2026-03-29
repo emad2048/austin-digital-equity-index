@@ -107,10 +107,12 @@ st.markdown("""
         color: #0F6E56;
         margin-bottom: 10px;
     }
-    h1, h2, h3, h4, h5, h6 {
-        color: #0F6E56 !important;
-        font-size: 2.2rem !important;
-    }
+    h1 { color: #0F6E56 !important; font-size: 2.2rem !important; }
+    h2 { color: #0F6E56 !important; font-size: 1.8rem !important; }
+    h3 { color: #0F6E56 !important; font-size: 1.5rem !important; }
+    h4 { color: #0F6E56 !important; font-size: 1.3rem !important; }
+    h5 { color: #0F6E56 !important; font-size: 1.1rem !important; }
+    h6 { color: #0F6E56 !important; font-size: 1rem !important; }
     [data-testid="stMarkdownContainer"] p {
         color: #2C2C2A !important;
     }
