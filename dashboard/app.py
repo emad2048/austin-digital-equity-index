@@ -113,6 +113,12 @@ st.markdown("""
     h4 { color: #0F6E56 !important; font-size: 1.3rem !important; }
     h5 { color: #0F6E56 !important; font-size: 1.1rem !important; }
     h6 { color: #0F6E56 !important; font-size: 1rem !important; }
+    [data-testid="stMarkdownContainer"] h1 { color: #0F6E56 !important; font-size: 2.2rem !important; }
+    [data-testid="stMarkdownContainer"] h2 { color: #0F6E56 !important; font-size: 1.8rem !important; }
+    [data-testid="stMarkdownContainer"] h3 { color: #0F6E56 !important; font-size: 1.5rem !important; }
+    [data-testid="stMarkdownContainer"] h4 { color: #0F6E56 !important; font-size: 1.3rem !important; }
+    [data-testid="stMarkdownContainer"] h5 { color: #0F6E56 !important; font-size: 1.1rem !important; }
+    [data-testid="stMarkdownContainer"] h6 { color: #0F6E56 !important; font-size: 1rem !important; }
     [data-testid="stMarkdownContainer"] p {
         color: #2C2C2A !important;
     }
@@ -310,7 +316,7 @@ if page == "The Case":
 
     # ── Section 1: Project purpose ────────────────────────────────────────────
     st.markdown(
-        "<h2 style='color:#0F6E56; margin-bottom:8px;'>"
+        "<h2 style='color:#0F6E56 !important; margin-bottom:8px;'>"
         "About This Project</h2>",
         unsafe_allow_html=True
     )
@@ -328,7 +334,7 @@ if page == "The Case":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 2: How the DII works ──────────────────────────────────────────
-    st.markdown("<h3 style='color:#0F6E56;'>How we measure digital inclusion</h3>",
+    st.markdown("<h3 style='color:#0F6E56 !important;'>How we measure digital inclusion</h3>",
                 unsafe_allow_html=True)
     st.markdown("Each business receives a Digital Inclusion Index (DII) score from 0–100 across five dimensions:")
 
@@ -360,7 +366,7 @@ if page == "The Case":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Section 3: Headline findings ─────────────────────────────────────────
-    st.markdown("<h3 style='color:#0F6E56;'>What we found</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#0F6E56 !important;'>What we found</h3>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     findings = [
@@ -403,7 +409,7 @@ elif page == "The Map":
     )
 
     st.markdown(
-        "<h4 style='color:#0F6E56;'>A 15-point gap exists within East Austin — some tracts thriving, others left behind</h4>",
+        "<h4 style='color:#0F6E56 !important;'>A 15-point gap exists within East Austin — some tracts thriving, others left behind</h4>",
         unsafe_allow_html=True
     )
     st.caption("Circle color shows DII score. Hover for tract name and score.")
@@ -411,7 +417,7 @@ elif page == "The Map":
     st.plotly_chart(fig1, use_container_width=True)
 
     st.markdown(
-        "<h4 style='color:#0F6E56;'>Where are the businesses?</h4>",
+        "<h4 style='color:#0F6E56 !important;'>Where are the businesses?</h4>",
         unsafe_allow_html=True
     )
     st.caption("Pin markers show business count per tract. Hover for details.")
@@ -599,7 +605,7 @@ elif page == "The Evidence":
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "Take Action":
     st.markdown(
-        "<h1 style='color:#0F6E56;'>The gap is measurable. The fixes are free.</h1>",
+        "<h1 style='color:#0F6E56 !important;'>The gap is measurable. The fixes are free.</h1>",
         unsafe_allow_html=True
     )
 
