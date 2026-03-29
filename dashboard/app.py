@@ -250,6 +250,7 @@ page = option_menu(
             "padding": "8px 24px",
             "margin": "0 -1rem 1rem -1rem",
             "border-bottom": "2px solid #0F6E56",
+            "width": "100% !important",
         },
         "menu-title": {
             "color": "#0F6E56",
@@ -272,6 +273,8 @@ page = option_menu(
             "border": "1px solid #0F6E56",
             "border-radius": "6px",
             "background-color": "#FFFFFF",
+            "flex": "1",
+            "text-align": "center",
         },
         "nav-link-selected": {
             "background-color": "#0F6E56",
