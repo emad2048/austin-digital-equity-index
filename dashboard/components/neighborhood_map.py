@@ -91,21 +91,6 @@ def build_map_1() -> go.Figure:
             pitch=0,
         ),
     )
-
-    fig.add_annotation(
-        xref="paper",
-        yref="paper",
-        x=0.68,
-        y=0.45,
-        text="East Austin",
-        showarrow=False,
-        font=dict(size=13, color="#1a1a1a", family="Arial", weight="bold"),
-        bgcolor="rgba(255,255,255,0.82)",
-        bordercolor="rgba(0,0,0,0.18)",
-        borderwidth=1,
-        borderpad=5,
-        xanchor="center",
-    )
     return fig
 
 

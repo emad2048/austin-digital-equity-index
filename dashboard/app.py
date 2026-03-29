@@ -290,7 +290,7 @@ elif page == "The Map":
         "lines drawn by decades of policy.**"
     )
 
-    st.markdown("#### How does East Austin compare?")
+    st.markdown("#### A 15-point gap exists within East Austin — some tracts thriving, others left behind")
     st.caption("Circle color shows DII score. Hover for tract name and score.")
     fig1 = build_map_1()
     st.plotly_chart(fig1, use_container_width=True)
