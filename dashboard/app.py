@@ -371,9 +371,10 @@ if page == "The Case":
 
     findings = [
         {
-            "stat": "6-point gap",
-            "text": "East Austin businesses are significantly harder to find online than businesses "
-                    "in comparable Austin neighborhoods — a gap that cannot be explained by chance alone.",
+            "stat": "15-point gap",
+            "label": "Within East Austin alone",
+            "text": "The spread between the neighborhood's most and least digitally visible tracts "
+                    "exceeds the gap between East Austin and its comparison neighborhoods combined.",
         },
         {
             "stat": "A structural pattern",
@@ -391,9 +392,11 @@ if page == "The Case":
     c1, c2, c3 = st.columns(3)
     for col, f in zip([c1, c2, c3], findings):
         with col:
+            label_html = f"<div class='stat-label'>{f['label']}</div>" if f.get("label") else ""
             st.markdown(f"""
             <div class="finding-card">
                 <div class="finding-stat">{f['stat']}</div>
+                {label_html}
                 <div class="finding-text">{f['text']}</div>
             </div>""", unsafe_allow_html=True)
 
