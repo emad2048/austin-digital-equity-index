@@ -549,60 +549,6 @@ elif page == "The Evidence":
         )
         st.plotly_chart(fig_bar, use_container_width=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # ── Per-neighborhood columns ──────────────────────────────────────────
-        col_ea, col_sc, col_td = st.columns(3)
-        for col, nbhd in zip([col_ea, col_sc, col_td], nbhds_order):
-            with col:
-                dim_labels = [row["dimension"] for row in dim_breakdown]
-                raw_vals   = [row[nbhd]["mean_raw"]   for row in dim_breakdown]
-                max_vals   = [row["max_pts"]           for row in dim_breakdown]
-                pct_vals   = [row[nbhd]["pct_of_max"]  for row in dim_breakdown]
-
-                hover_text = [
-                    f"{d}<br>{r:.1f} / {m} pts ({p:.1f}%)"
-                    for d, r, m, p in zip(dim_labels, raw_vals, max_vals, pct_vals)
-                ]
-
-                fig_col = go.Figure(go.Bar(
-                    x=raw_vals,
-                    y=dim_labels,
-                    orientation="h",
-                    marker_color=COLORS[nbhd],
-                    opacity=0.9,
-                    text=[f"{v:.1f}" for v in raw_vals],
-                    textposition="outside",
-                    textfont=dict(color="#2C2C2A", size=12),
-                    hovertext=hover_text,
-                    hoverinfo="text",
-                ))
-                fig_col.update_layout(
-                    **DARK,
-                    title=dict(
-                        text=nbhd,
-                        font=dict(color=COLORS[nbhd], size=15, family="sans-serif"),
-                        x=0,
-                    ),
-                    xaxis=dict(
-                        title=dict(text="Avg pts", font=dict(color="#5F5E5A", size=11)),
-                        tickfont=dict(color="#2C2C2A"),
-                        range=[0, 30],
-                        showgrid=False,
-                        zeroline=False,
-                    ),
-                    yaxis=dict(
-                        tickfont=dict(color="#2C2C2A"),
-                        showgrid=False,
-                        zeroline=False,
-                        autorange="reversed",
-                    ),
-                    margin=dict(l=100, r=40, t=40, b=30),
-                    height=280,
-                    showlegend=False,
-                )
-                st.plotly_chart(fig_col, use_container_width=True)
-
     st.markdown("<br>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
