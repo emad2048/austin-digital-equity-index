@@ -371,9 +371,10 @@ if page == "The Case":
 
     findings = [
         {
-            "stat": "6-point gap",
-            "text": "East Austin businesses are significantly harder to find online than businesses "
-                    "in comparable Austin neighborhoods — a gap that cannot be explained by chance alone.",
+            "stat": "15-point gap",
+            "text": "Within East Austin alone, the spread between the neighborhood's most and least "
+                    "digitally visible tracts exceeds the gap between East Austin and its comparison "
+                    "neighborhoods combined.",
         },
         {
             "stat": "A structural pattern",
