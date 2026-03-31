@@ -305,55 +305,26 @@ st.markdown("""
         font-weight: 400;
     }
 
-    /* ── Nav tabs (st.radio styled as tab bar) ── */
-    div[data-testid="stRadio"] {
-        background: #EFF7F4 !important;
-        padding: 10px 8px 12px 8px !important;
-        border-bottom: 2px solid #0F6E56 !important;
-        margin-bottom: 1.2rem !important;
-    }
-    div[data-testid="stRadio"] > label {
-        display: none !important;
-    }
-    div[data-testid="stRadio"] > div {
+    /* ── Nav tab buttons ── */
+    div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
         width: 100% !important;
-    }
-    div[data-testid="stRadio"] [role="radiogroup"] {
-        display: flex !important;
-        width: 100% !important;
-        gap: 8px !important;
-        flex-wrap: nowrap !important;
-        justify-content: stretch !important;
-    }
-    div[data-testid="stRadio"] [role="radiogroup"] > label {
-        flex: 1 1 0% !important;
-        width: 0 !important;
-        background: #FFFFFF !important;
         border: 1px solid rgba(15,110,86,0.3) !important;
         border-radius: 6px !important;
-        padding: 8px 18px !important;
-        text-align: center !important;
-        justify-content: center !important;
+        background: #FFFFFF !important;
         color: #0F6E56 !important;
         font-weight: 700 !important;
         font-size: 1.15rem !important;
-        cursor: pointer !important;
-        white-space: nowrap !important;
-        min-width: 0 !important;
+        padding: 8px 18px !important;
     }
-    div[data-testid="stRadio"] [role="radiogroup"] > label > div:first-child {
-        display: none !important;
-    }
-    div[data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
-        background: #0F6E56 !important;
-        color: #FFFFFF !important;
+    div[data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
+        background: #e0f0eb !important;
         border-color: #0F6E56 !important;
-        font-weight: 600 !important;
     }
-    div[data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p,
-    div[data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) span,
-    div[data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) div {
-        color: #FFFFFF !important;
+    div[data-testid="stHorizontalBlock"] button[kind="secondary"] p,
+    div[data-testid="stHorizontalBlock"] button[kind="secondary"] span {
+        color: #0F6E56 !important;
+        font-weight: 700 !important;
+        font-size: 1.15rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -449,17 +420,47 @@ st.markdown(
     '</div>',
     unsafe_allow_html=True,
 )
-page = st.radio(
-    "Navigation",
-    options=["\U0001F4CB The Case", "\U0001F5FA The Map", "\U0001F4CA The Evidence", "\u26A1 Take Action"],
-    horizontal=True,
-    label_visibility="collapsed",
-)
+if "page" not in st.session_state:
+    st.session_state.page = "The Case"
+
+tabs = [
+    ("\U0001F4CB", "The Case"),
+    ("\U0001F5FA", "The Map"),
+    ("\U0001F4CA", "The Evidence"),
+    ("\u26A1", "Take Action"),
+]
+
+nav_cols = st.columns(len(tabs))
+for i, (icon, label) in enumerate(tabs):
+    with nav_cols[i]:
+        if st.button(f"{icon} {label}", key=f"nav_{i}", use_container_width=True):
+            st.session_state.page = label
+
+page = st.session_state.page
+
+active_idx = next(i for i, (_, l) in enumerate(tabs) if l == page)
+st.markdown(f"""<style>
+div.stMainBlockContainer div[data-testid="stHorizontalBlock"]:first-of-type {{
+    background: #EFF7F4 !important;
+    padding: 10px 8px 12px 8px !important;
+    border-bottom: 2px solid #0F6E56 !important;
+    margin-bottom: 1.2rem !important;
+}}
+div.stMainBlockContainer div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child({active_idx + 1}) button {{
+    background: #0F6E56 !important;
+    color: #FFFFFF !important;
+    border-color: #0F6E56 !important;
+}}
+div.stMainBlockContainer div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child({active_idx + 1}) button p,
+div.stMainBlockContainer div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child({active_idx + 1}) button span {{
+    color: #FFFFFF !important;
+}}
+</style>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 1 — THE CASE
 # ══════════════════════════════════════════════════════════════════════════════
-if page == "\U0001F4CB The Case":
+if page == "The Case":
 
     # ── Hero framing ──────────────────────────────────────────────────────────
     st.markdown(
@@ -561,7 +562,7 @@ if page == "\U0001F4CB The Case":
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 2 — THE MAP
 # ══════════════════════════════════════════════════════════════════════════════
-elif page == "\U0001F5FA The Map":
+elif page == "The Map":
 
     st.markdown(
         "<div style='font-size: 1.6rem; font-weight: 600; color: #2C2C2A; "
@@ -608,7 +609,7 @@ elif page == "\U0001F5FA The Map":
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 3 — THE EVIDENCE
 # ══════════════════════════════════════════════════════════════════════════════
-elif page == "\U0001F4CA The Evidence":
+elif page == "The Evidence":
 
     # ── 1. Gentrification & Displacement ──────────────────────────────────────
     st.markdown(
@@ -804,7 +805,7 @@ elif page == "\U0001F4CA The Evidence":
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 4 — TAKE ACTION
 # ══════════════════════════════════════════════════════════════════════════════
-elif page == "\u26A1 Take Action":
+elif page == "Take Action":
 
     st.markdown(
         "<div style='font-size: 2.2rem; font-weight: 700; color: #0F6E56; "
