@@ -315,13 +315,19 @@ st.markdown("""
     div[data-testid="stRadio"] > label {
         display: none !important;
     }
+    div[data-testid="stRadio"] > div {
+        width: 100% !important;
+    }
     div[data-testid="stRadio"] [role="radiogroup"] {
         display: flex !important;
+        width: 100% !important;
         gap: 8px !important;
         flex-wrap: nowrap !important;
+        justify-content: stretch !important;
     }
     div[data-testid="stRadio"] [role="radiogroup"] > label {
-        flex: 1 1 0 !important;
+        flex: 1 1 0% !important;
+        width: 0 !important;
         background: #FFFFFF !important;
         border: 1px solid rgba(15,110,86,0.3) !important;
         border-radius: 6px !important;
